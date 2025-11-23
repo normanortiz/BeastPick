@@ -526,15 +526,13 @@
         }
 
         .editable-number,
-        .editable-name,
-        .editable-voted {
+        .editable-name {
             cursor: pointer;
             position: relative;
         }
 
         .editable-number:hover,
-        .editable-name:hover,
-        .editable-voted:hover {
+        .editable-name:hover {
             background: rgba(0, 188, 231, 0.2);
         }
 
@@ -669,8 +667,7 @@
                             <th>Number</th>
                             <th>Name</th>
                             <th>Status</th>
-                            <th>Voted</th>
-                            <th>Delete</th>
+                            <th style="width: 60px;"></th>
                         </tr>
                     </thead>
                     <tbody id="playersTableBody">
@@ -871,8 +868,7 @@
                     <td class="editable-number" data-player-id="${player.id}" data-field="number">${player.number}</td>
                     <td class="editable-name" data-player-id="${player.id}" data-field="name">${player.name}</td>
                     <td class="status-toggle" data-player-id="${player.id}" style="cursor: pointer;">${player.status}</td>
-                    <td class="editable-voted" data-player-id="${player.id}" data-field="voted">${player.voted !== undefined && player.voted !== null ? player.voted : ''}</td>
-                    <td style="text-align: center;">
+                    <td style="text-align: right; padding-right: 20px;">
                         <button class="icon-btn" title="Delete Player" onclick="deletePlayer(${player.id})" style="padding: 8px;">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -884,7 +880,7 @@
             `).join('');
 
             // Add click handlers for editable fields
-            document.querySelectorAll('.editable-number, .editable-name, .editable-voted').forEach(cell => {
+            document.querySelectorAll('.editable-number, .editable-name').forEach(cell => {
                 cell.addEventListener('click', function() {
                     makeEditable(this);
                 });
@@ -1277,8 +1273,7 @@
                     number: newPlayerNumber,
                     name: `Player ${newPlayerNumber}`,
                     photoUrl: null,
-                    status: 'Active',
-                    voted: 0
+                    status: 'Active'
                 };
                 console.log('Adding new player:', newPlayer);
                 const result = await addPlayer(newPlayer);
@@ -1322,9 +1317,9 @@
             const config = await getGameConfig();
 
             // Create CSV content
-            let csv = 'Number,Name,Status,Voted\n';
+            let csv = 'Number,Name,Status\n';
             players.forEach(player => {
-                csv += `${player.number},"${player.name}",${player.status},"${player.voted}"\n`;
+                csv += `${player.number},"${player.name}",${player.status}\n`;
             });
 
             // Download CSV

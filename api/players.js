@@ -1,15 +1,15 @@
 // In-memory storage for development (fallback when KV is not configured)
 let memoryStore = {
     players: [
-        { id: 1, number: '001', name: 'Player One', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 2, number: '002', name: 'Player Two', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 3, number: '003', name: 'Player Three', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 4, number: '004', name: 'Player Four', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 5, number: '005', name: 'Player Five', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 6, number: '006', name: 'Player Six', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 7, number: '007', name: 'Player Seven', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 8, number: '008', name: 'Player Eight', photoUrl: null, status: 'Active', voted: 0 },
-        { id: 9, number: '009', name: 'Player Nine', photoUrl: null, status: 'Active', voted: 0 }
+        { id: 1, number: '001', name: 'Player One', photoUrl: null, status: 'Active' },
+        { id: 2, number: '002', name: 'Player Two', photoUrl: null, status: 'Active' },
+        { id: 3, number: '003', name: 'Player Three', photoUrl: null, status: 'Active' },
+        { id: 4, number: '004', name: 'Player Four', photoUrl: null, status: 'Active' },
+        { id: 5, number: '005', name: 'Player Five', photoUrl: null, status: 'Active' },
+        { id: 6, number: '006', name: 'Player Six', photoUrl: null, status: 'Active' },
+        { id: 7, number: '007', name: 'Player Seven', photoUrl: null, status: 'Active' },
+        { id: 8, number: '008', name: 'Player Eight', photoUrl: null, status: 'Active' },
+        { id: 9, number: '009', name: 'Player Nine', photoUrl: null, status: 'Active' }
     ]
 };
 
