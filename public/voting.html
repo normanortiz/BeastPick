@@ -128,6 +128,8 @@
             try {
                 const config = await getGameConfig();
 
+                console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked);
+
                 // Check if timer should be shown and voting is unlocked
                 if (config.timerVisibility === 'show' && config.timerDuration > 0 && !config.votingLocked) {
                     document.getElementById('timerContainer').style.display = 'block';
@@ -142,11 +144,13 @@
 
                     isTimerActive = true;
                     startTimer();
+                    console.log('Timer started with', timeRemaining, 'seconds');
                 } else {
                     document.getElementById('timerContainer').style.display = 'none';
                     if (timerInterval) {
                         clearInterval(timerInterval);
                     }
+                    console.log('Timer hidden - conditions not met');
                 }
             } catch (error) {
                 console.error('Error initializing timer:', error);
