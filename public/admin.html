@@ -240,6 +240,31 @@
             background: var(--primary-pink);
         }
 
+        .password-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 400;
+            transition: color 0.3s ease;
+            padding: 0;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-pink);
+        }
+
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -974,7 +999,10 @@
 
                     <div class="form-group" id="securityPasscodeGroup">
                         <label class="field-label">Security Passcode</label>
-                        <input type="tel" id="securityPasscode" value="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" oninput="validatePasscode(this)" onchange="autoSaveSettings()">
+                        <div class="password-input-wrapper">
+                            <input type="password" id="securityPasscode" value="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" oninput="validatePasscode(this)" onchange="autoSaveSettings()" style="padding-right: 60px;">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">Show</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1423,6 +1451,20 @@
         // Validate passcode (must be exactly 6 digits)
         function validatePasscode(input) {
             input.value = input.value.replace(/\D/g, '').slice(0, 6);
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('securityPasscode');
+            const toggleButton = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = 'Show';
+            }
         }
 
         // Handle logo upload
