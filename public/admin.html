@@ -265,6 +265,23 @@
             color: var(--primary-pink);
         }
 
+        .input-with-label {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-suffix-label {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 400;
+            pointer-events: none;
+        }
+
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -993,8 +1010,11 @@
                     </div>
 
                     <div class="form-group" id="timerDurationGroup">
-                        <label class="field-label">Timer Duration (seconds)</label>
-                        <input type="number" id="timerDuration" value="60" placeholder="60" oninput="autoSaveSettings()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" min="1" step="1">
+                        <label class="field-label">Timer Duration</label>
+                        <div class="input-with-label">
+                            <input type="number" id="timerDuration" value="60" placeholder="60" oninput="autoSaveSettings()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" min="1" step="1" style="padding-right: 75px;">
+                            <span class="input-suffix-label">seconds</span>
+                        </div>
                     </div>
 
                     <div class="form-group" id="securityPasscodeGroup">
