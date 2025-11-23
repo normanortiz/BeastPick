@@ -1046,10 +1046,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Submission Style</label>
+                        <label>Submission Type</label>
                         <div class="combobox-container">
                             <div class="combobox" onclick="toggleCombobox(this)">
-                                <span id="selectedSubmissionStyle">Instant Submit</span>
+                                <span id="selectedSubmissionType">Instant Submit</span>
                                 <svg class="combobox-arrow" width="12" height="8" viewBox="0 0 12 8" fill="white">
                                     <path d="M1 1l5 5 5-5"/>
                                 </svg>
@@ -1301,9 +1301,9 @@
                     document.getElementById('selectedVotingMode').textContent = votingModeText;
                 }
 
-                if (config.submissionStyle) {
-                    const submissionStyleText = config.submissionStyle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    document.getElementById('selectedSubmissionStyle').textContent = submissionStyleText;
+                if (config.submissionType) {
+                    const submissionTypeText = config.submissionType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    document.getElementById('selectedSubmissionType').textContent = submissionTypeText;
                 }
 
                 if (config.playerName) {
@@ -1422,8 +1422,8 @@
             let selectedText;
             if (container.querySelector('#selectedVotingMode')) {
                 selectedText = container.querySelector('#selectedVotingMode');
-            } else if (container.querySelector('#selectedSubmissionStyle')) {
-                selectedText = container.querySelector('#selectedSubmissionStyle');
+            } else if (container.querySelector('#selectedSubmissionType')) {
+                selectedText = container.querySelector('#selectedSubmissionType');
             } else if (container.querySelector('#selectedEliminatedPlayers')) {
                 selectedText = container.querySelector('#selectedEliminatedPlayers');
             } else if (container.querySelector('#selectedPlayerName')) {
@@ -1480,7 +1480,7 @@
                 // Collect all settings
                 const settings = {
                     votingMode: document.querySelector('#selectedVotingMode')?.textContent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') || 'player',
-                    submissionStyle: document.querySelector('#selectedSubmissionStyle')?.textContent.toLowerCase().replace(/ /g, '-') || 'instant-submit',
+                    submissionType: document.querySelector('#selectedSubmissionType')?.textContent.toLowerCase().replace(/ /g, '-') || 'instant-submit',
                     playerName: document.querySelector('#selectedPlayerName')?.textContent.toLowerCase() || 'show',
                     eliminatedPlayers: document.querySelector('#selectedEliminatedPlayers')?.textContent.toLowerCase() || 'show',
                     timerVisibility: document.querySelector('#selectedTimerVisibility')?.textContent.toLowerCase() || 'show',

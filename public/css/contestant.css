@@ -364,6 +364,11 @@ html, body {
     z-index: 100;
 }
 
+.player-card:not(.eliminated).selected {
+    transform: scale(1.08);
+    box-shadow: 0 0 40px rgba(0, 188, 231, 1);
+}
+
 .player-card:not(.eliminated).selected::before {
     content: '';
     position: absolute;

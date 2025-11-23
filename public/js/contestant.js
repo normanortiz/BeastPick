@@ -3,6 +3,8 @@
 let gameConfig = {};
 let players = [];
 let currentVoteValue = 15;
+let selectedPlayers = new Set(); // For batch submit mode
+let voteIsLocked = false; // For instant submit mode
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
@@ -332,19 +334,78 @@ async function handleVote(player, event) {
         return;
     }
 
-    // Remove all unselected classes
-    document.querySelectorAll('.player-card').forEach(card => {
-        card.classList.remove('unselected');
-    });
-
-    // Add unselected class to all cards except clicked one
     const clickedCard = event.currentTarget;
-    const allCards = document.querySelectorAll('.player-card');
-    allCards.forEach(card => {
-        if (card !== clickedCard) {
-            card.classList.add('unselected');
+    const allCards = document.querySelectorAll('.player-card:not(.eliminated)');
+    const submissionType = gameConfig.submissionType || 'instant-submit';
+
+    // INSTANT SUBMIT: Lock selection immediately, no way to change
+    if (submissionType === 'instant-submit') {
+        if (voteIsLocked) {
+            // Vote already locked, cannot change
+            return;
         }
-    });
+
+        // Mark this vote as locked
+        voteIsLocked = true;
+
+        // Remove unselected from all cards
+        allCards.forEach(card => card.classList.remove('unselected'));
+
+        // Add selected class to clicked card
+        clickedCard.classList.add('selected');
+
+        // Dim all other cards
+        allCards.forEach(card => {
+            if (card !== clickedCard) {
+                card.classList.add('unselected');
+            }
+        });
+
+        // Disable all cards (locked state)
+        allCards.forEach(card => {
+            card.style.pointerEvents = 'none';
+        });
+
+        console.log('Vote locked for player:', player.number);
+    }
+    // TIMED BATCH: Allow changing vote until timer runs out
+    else if (submissionType === 'timed-batch') {
+        // Remove unselected from all cards
+        allCards.forEach(card => card.classList.remove('unselected'));
+
+        // Remove selected from all cards
+        allCards.forEach(card => card.classList.remove('selected'));
+
+        // Add selected class to clicked card
+        clickedCard.classList.add('selected');
+
+        // Dim all other cards
+        allCards.forEach(card => {
+            if (card !== clickedCard) {
+                card.classList.add('unselected');
+            }
+        });
+
+        console.log('Vote changed to player:', player.number);
+    }
+    // BATCH SUBMIT: Allow multiple selections, toggle on/off
+    else if (submissionType === 'batch-submit') {
+        const playerId = player.number;
+
+        // Toggle selection
+        if (selectedPlayers.has(playerId)) {
+            // Unselect
+            selectedPlayers.delete(playerId);
+            clickedCard.classList.remove('selected');
+            clickedCard.classList.remove('unselected');
+        } else {
+            // Select
+            selectedPlayers.add(playerId);
+            clickedCard.classList.add('selected');
+        }
+
+        console.log('Selected players:', Array.from(selectedPlayers));
+    }
 
     /* UNCOMMENT WHEN API IS READY:
     try {
@@ -355,15 +416,15 @@ async function handleVote(player, event) {
             },
             body: JSON.stringify({
                 playerNumber: sessionStorage.getItem('playerNumber'),
-                targetPlayer: player.id,
-                voteValue: currentVoteValue
+                targetPlayer: submissionType === 'batch-submit' ? Array.from(selectedPlayers) : player.id,
+                voteValue: currentVoteValue,
+                submissionType: submissionType
             })
         });
 
         const result = await response.json();
 
         if (result.success) {
-            // Show success animation
             showVoteSuccess();
         } else {
             alert('Vote failed: ' + result.message);
