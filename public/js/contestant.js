@@ -172,40 +172,59 @@ async function loadGameData() {
     }
 }
 
-// Adjust font size based on name length
+// Global minimum scale for uniform sizing
+let globalMinScale = null;
+
+// Calculate minimum scale across all player names
+function calculateGlobalMinScale() {
+    const allNames = document.querySelectorAll('.player-name');
+    let minScale = Infinity;
+
+    allNames.forEach(nameElement => {
+        const card = nameElement.closest('.player-card');
+        if (!card) return;
+
+        const maxWidth = card.offsetWidth * 0.9;
+        const nameLength = nameElement.textContent.length;
+
+        // Temporarily reset to base size (10px) to measure actual text width
+        nameElement.style.removeProperty('--name-scale');
+        void nameElement.offsetWidth;
+
+        const textWidth = nameElement.scrollWidth;
+
+        // Calculate scale to fit available width
+        let scale = Math.max(0.5, maxWidth / textWidth);
+
+        // For names with 6 or fewer characters, calculate based on reference
+        if (nameLength <= 6) {
+            const referenceCardWidth = 213;
+            const referenceScale = 3;
+            scale = (card.offsetWidth / referenceCardWidth) * referenceScale;
+        }
+
+        minScale = Math.min(minScale, scale);
+    });
+
+    globalMinScale = minScale !== Infinity ? minScale : 1;
+
+    // Apply the global minimum scale to all names
+    allNames.forEach(nameElement => {
+        nameElement.style.setProperty('--name-scale', globalMinScale);
+    });
+}
+
+// Adjust font size based on name length (now uses global minimum)
 function adjustNameFontSize(nameElement) {
-    const card = nameElement.closest('.player-card');
-    if (!card) return;
-
-    const maxWidth = card.offsetWidth * 0.9;
-    const nameLength = nameElement.textContent.length;
-
-    // Temporarily reset to base size (10px) to measure actual text width
-    nameElement.style.removeProperty('--name-scale');
-
-    // Force reflow to get accurate measurement
-    void nameElement.offsetWidth;
-
-    const textWidth = nameElement.scrollWidth;
-
-    // Calculate scale to fit available width
-    let scale = Math.max(0.5, maxWidth / textWidth);
-
-    // For names with 6 or fewer characters, calculate based on reference: 213px card = 3 scale
-    if (nameLength <= 6) {
-        const referenceCardWidth = 213;
-        const referenceScale = 3;
-        scale = (card.offsetWidth / referenceCardWidth) * referenceScale;
+    if (globalMinScale !== null) {
+        nameElement.style.setProperty('--name-scale', globalMinScale);
     }
-
-    nameElement.style.setProperty('--name-scale', scale);
 }
 
 // ResizeObserver for responsive font sizing
 const nameResizeObserver = new ResizeObserver(entries => {
-    entries.forEach(entry => {
-        adjustNameFontSize(entry.target);
-    });
+    // Recalculate global minimum scale when any card resizes
+    calculateGlobalMinScale();
 });
 
 // Render players grid
@@ -252,13 +271,16 @@ function renderPlayers() {
         // Set up responsive font sizing for name
         const nameElement = card.querySelector('.player-name');
         if (nameElement) {
-            // Initial sizing
-            adjustNameFontSize(nameElement);
-
             // Observe for future resizes
             nameResizeObserver.observe(nameElement);
         }
     });
+
+    // Calculate global minimum scale after all cards are rendered
+    // Small delay to ensure DOM measurements are accurate
+    setTimeout(() => {
+        calculateGlobalMinScale();
+    }, 100);
 }
 
 // Create player card
