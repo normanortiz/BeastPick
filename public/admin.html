@@ -112,7 +112,7 @@
             background: rgba(0, 0, 0, 0.5);
             border: 2px dashed var(--primary-blue);
             border-radius: 12px;
-            padding: 20px;
+            padding: 0 20px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -982,6 +982,23 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Submission Style</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedSubmissionStyle">Instant Submit</span>
+                                <svg class="combobox-arrow" width="12" height="8" viewBox="0 0 12 8" fill="white">
+                                    <path d="M1 1l5 5 5-5"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option selected" onclick="selectOption(this, 'instant')">Instant Submit</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'batch')">Batch Submit</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'timed-batch')">Timed Batch</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="field-label">Player's Name</label>
                         <div class="combobox-container">
                             <div class="combobox" onclick="toggleCombobox(this)">
@@ -1037,23 +1054,6 @@
                     <div class="form-group" id="option2Group" style="display: none;">
                         <label class="field-label">Option 2</label>
                         <input type="text" id="option2Label" value="No" placeholder="No" oninput="autoSaveSettings()">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Submission Style</label>
-                        <div class="combobox-container">
-                            <div class="combobox" onclick="toggleCombobox(this)">
-                                <span id="selectedSubmissionStyle">Instant Submit</span>
-                                <svg class="combobox-arrow" width="12" height="8" viewBox="0 0 12 8" fill="white">
-                                    <path d="M1 1l5 5 5-5"/>
-                                </svg>
-                            </div>
-                            <div class="combobox-options">
-                                <div class="combobox-option selected" onclick="selectOption(this, 'instant')">Instant Submit</div>
-                                <div class="combobox-option" onclick="selectOption(this, 'batch')">Batch Submit</div>
-                                <div class="combobox-option" onclick="selectOption(this, 'timed-batch')">Timed Batch</div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="form-group">
