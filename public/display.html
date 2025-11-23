@@ -691,9 +691,9 @@
             try {
                 // Initial check
                 const config = await getGameConfig();
-                const votingLocked = config.votingLocked !== undefined ? config.votingLocked : true;
+                let previousLockState = config.votingLocked !== undefined ? config.votingLocked : true;
 
-                if (votingLocked) {
+                if (previousLockState) {
                     lockDisplay();
                 } else {
                     unlockDisplay();
@@ -704,6 +704,14 @@
                 setInterval(async () => {
                     const updatedConfig = await getGameConfig();
                     const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
+
+                    // If voting just unlocked (went from locked to unlocked), refresh the page
+                    if (previousLockState && !isLocked) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    previousLockState = isLocked;
 
                     if (isLocked) {
                         lockDisplay();
