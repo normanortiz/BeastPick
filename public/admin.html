@@ -915,22 +915,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="field-label">Timer Duration</label>
-                        <div class="combobox-container">
-                            <div class="combobox" onclick="toggleCombobox(this)">
-                                <span id="selectedTimerVisibility">Show</span>
-                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div class="combobox-options">
-                                <div class="combobox-option" onclick="selectOption(this, 'show')">Show</div>
-                                <div class="combobox-option" onclick="selectOption(this, 'hide')">Hide</div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Middle Column (Empty) -->
@@ -964,6 +948,22 @@
                         <div class="file-input-wrapper" onclick="document.getElementById('logoUpload').click()">
                             <span id="logoFileName">No file chosen</span>
                             <button type="button" class="file-browse-btn">Browse</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Timer</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedTimerVisibility">Show</span>
+                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option" onclick="selectOption(this, 'show')">Show</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'hide')">Hide</div>
+                            </div>
                         </div>
                     </div>
 
