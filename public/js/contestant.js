@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Set up option button handlers
     setupOptionButtons();
 
-    // Poll for config changes every 2 seconds
+    // Poll for config and player changes every 2 seconds
     setInterval(async () => {
         const newConfig = await getGameConfig();
 
@@ -44,6 +44,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (newConfig.eliminatedPlayers !== gameConfig.eliminatedPlayers) {
             gameConfig = newConfig;
             players = await getPlayers();
+            renderPlayers();
+        }
+
+        // Check if player list changed (additions, deletions, or updates)
+        const newPlayers = await getPlayers();
+        const playersChanged = newPlayers.length !== players.length ||
+            !newPlayers.every((p, i) => players[i] && p.id === players[i].id && p.name === players[i].name && p.eliminated === players[i].eliminated);
+
+        if (playersChanged) {
+            console.log('Player list changed, refreshing...');
+            players = newPlayers;
             renderPlayers();
         }
     }, 2000);
