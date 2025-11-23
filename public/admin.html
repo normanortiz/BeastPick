@@ -1347,9 +1347,8 @@
                     document.getElementById('currentRoundDisplay').textContent = config.currentRound;
                 }
 
-                if (config.customLogo) {
-                    updateLogoPreview(config.customLogo);
-                }
+                // Show custom logo if set, otherwise show default BeastPick logo
+                updateLogoPreview(config.customLogo || '/images/BeastPick.png');
 
                 // Update voting lock status (default to locked)
                 const votingLocked = config.votingLocked !== undefined ? config.votingLocked : true;
