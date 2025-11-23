@@ -209,11 +209,11 @@
         }
 
         /* Dynamic border-radius classes based on player count */
-        .radius-xs { border-radius: 5px !important; }
-        .radius-sm { border-radius: 10px !important; }
-        .radius-md { border-radius: 20px !important; }
-        .radius-lg { border-radius: 30px !important; }
-        .radius-xl { border-radius: 50px !important; }
+        .radius-xs { border-radius: 15px !important; }
+        .radius-sm { border-radius: 20px !important; }
+        .radius-md { border-radius: 30px !important; }
+        .radius-lg { border-radius: 40px !important; }
+        .radius-xl { border-radius: 60px !important; }
 
         .player-number {
             position: absolute;
@@ -429,18 +429,18 @@
          * Algorithm: More players = smaller radius for denser grids
          *
          * Examples:
-         * - 1-4 players (2x2 grid): radius-xl (50px) - Large, spacious cards
-         * - 5-9 players (3x3 grid): radius-lg (30px) - Medium-large cards
-         * - 10-16 players (4x4 grid): radius-md (20px) - Medium cards
-         * - 17-25 players (5x5 grid): radius-sm (10px) - Smaller cards
-         * - 26+ players: radius-xs (5px) - Densest layout
+         * - 1-4 players (2x2 grid): radius-xl (60px) - Large, spacious cards
+         * - 5-9 players (3x3 grid): radius-lg (40px) - Medium-large cards
+         * - 10-16 players (4x4 grid): radius-md (30px) - Medium cards
+         * - 17-25 players (5x5 grid): radius-sm (20px) - Smaller cards
+         * - 26+ players: radius-xs (15px) - Densest layout
          */
         function calculateBorderRadiusClass(playerCount) {
-            if (playerCount <= 4) return 'radius-xl';   // 50px for 1-4 players
-            if (playerCount <= 9) return 'radius-lg';   // 30px for 5-9 players
-            if (playerCount <= 16) return 'radius-md';  // 20px for 10-16 players
-            if (playerCount <= 25) return 'radius-sm';  // 10px for 17-25 players
-            return 'radius-xs';                         // 5px for 26+ players
+            if (playerCount <= 4) return 'radius-xl';   // 60px for 1-4 players
+            if (playerCount <= 9) return 'radius-lg';   // 40px for 5-9 players
+            if (playerCount <= 16) return 'radius-md';  // 30px for 10-16 players
+            if (playerCount <= 25) return 'radius-sm';  // 20px for 17-25 players
+            return 'radius-xs';                         // 15px for 26+ players
         }
 
         // Grid layout algorithm for 1920x1080
