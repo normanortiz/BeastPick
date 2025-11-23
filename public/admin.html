@@ -295,6 +295,7 @@
             font-weight: 400;
             transition: color 0.3s ease;
             padding: 0;
+            padding-top: 5px;
             margin: 0;
             line-height: 1;
             height: 14px;
@@ -315,6 +316,7 @@
             font-weight: 400;
             pointer-events: none;
             margin: 0;
+            padding-top: 5px;
             line-height: 1;
             height: 14px;
         }
@@ -650,6 +652,10 @@
 
             .settings-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .settings-column:first-child .form-group:last-child {
+                margin-bottom: 40px;
             }
 
             .form-group input,
