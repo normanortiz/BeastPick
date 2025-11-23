@@ -128,12 +128,25 @@
             try {
                 const config = await getGameConfig();
 
-                // Check if timer should be shown
-                if (config.timerVisibility === 'show' && config.timerDuration > 0) {
+                // Check if timer should be shown and voting is unlocked
+                if (config.timerVisibility === 'show' && config.timerDuration > 0 && !config.votingLocked) {
                     document.getElementById('timerContainer').style.display = 'block';
-                    timeRemaining = config.timerDuration;
+
+                    // Calculate time remaining based on start time
+                    if (config.timerStartTime) {
+                        const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
+                        timeRemaining = Math.max(0, config.timerDuration - elapsed);
+                    } else {
+                        timeRemaining = config.timerDuration;
+                    }
+
                     isTimerActive = true;
                     startTimer();
+                } else {
+                    document.getElementById('timerContainer').style.display = 'none';
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                    }
                 }
             } catch (error) {
                 console.error('Error initializing timer:', error);
@@ -163,6 +176,9 @@
         }
 
         function lockVoting() {
+            // Show lock overlay
+            document.getElementById('lockOverlay').style.display = 'flex';
+
             // Lock all player cards
             document.querySelectorAll('.player-card').forEach(card => {
                 card.classList.add('locked');
@@ -179,8 +195,62 @@
             });
         }
 
-        // Initialize timer when page loads
-        initTimer();
+        function unlockVoting() {
+            // Hide lock overlay
+            document.getElementById('lockOverlay').style.display = 'none';
+
+            // Unlock all player cards
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.classList.remove('locked');
+            });
+
+            // Unlock vote buttons
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.classList.remove('locked');
+            });
+
+            // Unlock option buttons
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('locked');
+            });
+        }
+
+        // Listen for voting lock state changes
+        async function watchVotingLockState() {
+            try {
+                // Initial check
+                const config = await getGameConfig();
+                const votingLocked = config.votingLocked !== undefined ? config.votingLocked : true;
+
+                if (votingLocked) {
+                    lockVoting();
+                } else {
+                    unlockVoting();
+                    initTimer();
+                }
+
+                // Poll for changes every 2 seconds
+                setInterval(async () => {
+                    const updatedConfig = await getGameConfig();
+                    const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
+
+                    if (isLocked) {
+                        lockVoting();
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+                    } else {
+                        unlockVoting();
+                        initTimer();
+                    }
+                }, 2000);
+            } catch (error) {
+                console.error('Error watching voting lock state:', error);
+            }
+        }
+
+        // Initialize voting lock state watcher when page loads
+        watchVotingLockState();
     </script>
 </body>
 </html>

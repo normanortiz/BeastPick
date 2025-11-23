@@ -907,11 +907,10 @@
                 <div class="control-card">
                     <h3>VOTING</h3>
                     <div class="control-card-content">
-                        <p><span class="status-indicator inactive"></span>Voting Locked</p>
+                        <p><span class="status-indicator inactive" id="votingStatusIndicator"></span><span id="votingStatusText">Voting Locked</span></p>
                     </div>
                     <div class="control-card-buttons">
-                        <button class="btn btn-primary">START</button>
-                        <button class="btn btn-secondary">LOCK</button>
+                        <button class="btn btn-primary" id="votingToggleBtn" onclick="toggleVotingLock()">START</button>
                     </div>
                 </div>
 
@@ -1332,6 +1331,10 @@
                     updateLogoPreview(config.customLogo);
                 }
 
+                // Update voting lock status (default to locked)
+                const votingLocked = config.votingLocked !== undefined ? config.votingLocked : true;
+                updateVotingLockUI(votingLocked);
+
                 // Update voting mode visibility
                 updateVotingModeVisibility();
             } catch (error) {
@@ -1474,6 +1477,50 @@
                 console.log('Settings auto-saved:', settings);
             } catch (error) {
                 console.error('Error saving settings:', error);
+            }
+        }
+
+        // Toggle voting lock
+        async function toggleVotingLock() {
+            try {
+                const config = await getGameConfig();
+                const currentlyLocked = config.votingLocked !== undefined ? config.votingLocked : true;
+                const newLockedState = !currentlyLocked;
+
+                // Update Firebase
+                await updateGameConfig({
+                    votingLocked: newLockedState,
+                    timerStartTime: newLockedState ? null : Date.now()
+                });
+
+                // Update UI
+                updateVotingLockUI(newLockedState);
+
+                console.log(`Voting ${newLockedState ? 'locked' : 'unlocked'}`);
+            } catch (error) {
+                console.error('Error toggling voting lock:', error);
+                alert('Error toggling voting lock');
+            }
+        }
+
+        // Update voting lock UI
+        function updateVotingLockUI(isLocked) {
+            const indicator = document.getElementById('votingStatusIndicator');
+            const statusText = document.getElementById('votingStatusText');
+            const toggleBtn = document.getElementById('votingToggleBtn');
+
+            if (isLocked) {
+                // Voting is locked
+                indicator.classList.remove('active');
+                indicator.classList.add('inactive');
+                statusText.textContent = 'Voting Locked';
+                toggleBtn.textContent = 'START';
+            } else {
+                // Voting is unlocked/on
+                indicator.classList.remove('inactive');
+                indicator.classList.add('active');
+                statusText.textContent = 'Voting On';
+                toggleBtn.textContent = 'LOCK';
             }
         }
 
