@@ -511,27 +511,30 @@
 
             // Extract numeric values from voted field for leader highlighting
             const votedValues = filteredPlayers.map(p => {
-                const voted = p.voted || '0';
-                const match = voted.match(/(\d+)/);
-                return match ? parseInt(match[1]) : 0;
+                const voted = p.voted || 0;
+                // Handle both numeric and string values (for backward compatibility)
+                return typeof voted === 'number' ? voted : parseInt(String(voted).match(/(\d+)/)?.[1] || '0');
             });
             const maxVoted = Math.max(...votedValues);
 
             // Check playerName setting
             const showPlayerName = (config.playerName || 'show') === 'show';
 
+            // Get unit from config (defaults to 'lbs')
+            const unit = config.unit || 'lbs';
+
             container.innerHTML = filteredPlayers.map(player => {
-                const voted = player.voted || '0';
-                const votedMatch = voted.match(/(\d+)/);
-                const votedNum = votedMatch ? parseInt(votedMatch[1]) : 0;
+                const voted = player.voted || 0;
+                // Handle both numeric and string values (for backward compatibility)
+                const votedNum = typeof voted === 'number' ? voted : parseInt(String(voted).match(/(\d+)/)?.[1] || '0');
                 const isLeader = votedNum === maxVoted && votedNum > 0;
                 const isEliminated = player.eliminated || player.status === 'Eliminated';
 
                 const imageUrl = player.photoUrl || `/images/players/${player.number}.png`;
 
-                // Only show player value if playerName is 'show'
+                // Only show player value if playerName is 'show', combine quantity with unit from config
                 const playerValueHtml = showPlayerName
-                    ? `<div class="player-value">${voted}</div>`
+                    ? `<div class="player-value">${votedNum} ${unit}</div>`
                     : '';
 
                 return `
