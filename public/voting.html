@@ -237,13 +237,18 @@
         // Listen for voting lock state changes
         async function watchVotingLockState() {
             try {
+                console.log('watchVotingLockState called');
                 // Initial check
                 const config = await getGameConfig();
+                console.log('Got config:', config);
                 let previousLockState = config.votingLocked !== undefined ? config.votingLocked : true;
+                console.log('Previous lock state:', previousLockState);
 
                 if (previousLockState) {
+                    console.log('Locking voting (initial)');
                     lockVoting();
                 } else {
+                    console.log('Unlocking voting and initializing timer (initial)');
                     unlockVoting();
                     initTimer();
                 }
@@ -255,6 +260,7 @@
 
                     // If voting just unlocked (went from locked to unlocked), refresh the page
                     if (previousLockState && !isLocked) {
+                        console.log('Voting unlocked, refreshing page...');
                         window.location.reload();
                         return;
                     }
