@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beast Pick - Voting</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/global.css?v=7">
+    <link rel="stylesheet" href="/css/contestant.css?v=7">
+</head>
+<body>
+    <!-- Lock Overlay (shown when voting is locked) -->
+    <div class="lock-overlay" id="lockOverlay" style="display: none;">
+        <h1 id="lockTitle">LOCKED</h1>
+        <p id="lockMessage">Waiting for admin to start voting...</p>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal" id="logoutModal" style="display: none;">
+        <div class="modal-content">
+            <h2>LOGOUT</h2>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="cancelLogoutBtn">CANCEL</button>
+                <button class="btn btn-primary" id="confirmLogoutBtn">LOGOUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="contestant-header">
+        <div class="header-image" id="headerImage">
+            <img src="/images/BeastPick.png" alt="Beast Pick Logo">
+        </div>
+        <button class="lock-btn" id="logoutBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="white" stroke-width="2" opacity="0.6"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                <circle cx="12" cy="16" r="1.5" fill="white" opacity="0.6"/>
+            </svg>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="contestant-main">
+        <h1 class="voting-title">CAST YOUR VOTE</h1>
+
+        <!-- Vote Value Controls (for Quantity & Player mode) -->
+        <div class="vote-controls" id="voteControls">
+            <button class="vote-btn vote-minus" id="decreaseBtn">-</button>
+            <div class="vote-value">
+                <span id="voteValue">15</span>
+                <span class="vote-unit" id="voteUnit">lbs</span>
+            </div>
+            <button class="vote-btn vote-plus" id="increaseBtn">+</button>
+        </div>
+
+        <!-- Option Buttons (for Option & Player mode) -->
+        <div class="option-buttons" id="optionButtons" style="display: none;">
+            <button class="option-btn" id="optionABtn">OPTION A</button>
+            <button class="option-btn" id="optionBBtn">OPTION B</button>
+        </div>
+
+        <!-- Players Grid -->
+        <div class="players-grid" id="playersGrid">
+            <!-- Player cards will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/contestant.js?v=9"></script>
+    <script>
+        // Check authentication (bypassed for development)
+        // if (!checkAuthentication('contestant')) {
+        //     // Will redirect if not authenticated
+        // }
+
+        // Logout button handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            document.getElementById('logoutModal').style.display = 'flex';
+        });
+
+        document.getElementById('cancelLogoutBtn').addEventListener('click', () => {
+            document.getElementById('logoutModal').style.display = 'none';
+        });
+
+        document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
+            sessionStorage.clear();
+            window.location.href = '/players.html';
+        });
+    </script>
+</body>
+</html>

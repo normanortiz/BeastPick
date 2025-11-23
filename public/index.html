@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beast Pick - Admin</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/global.css?v=3">
+    <style>
+        .passcode-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        }
+
+        .logo-container {
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo-container img {
+            max-width: 400px;
+            height: auto;
+        }
+
+        .logo-placeholder {
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+
+        .passcode-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 60px 40px;
+            border-radius: 30px;
+            position: relative;
+            animation: slideIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .passcode-form::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 30px;
+            padding: 3px;
+            background: linear-gradient(
+                90deg,
+                var(--primary-blue),
+                var(--primary-pink),
+                var(--primary-blue),
+                var(--primary-pink),
+                var(--primary-blue)
+            );
+            background-size: 200% 200%;
+            animation: gradientShift 3s linear infinite;
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .passcode-form h1 {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .passcode-form h2 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .passcode-input {
+            width: 100%;
+            font-family: var(--font-family);
+            font-size: 48px;
+            font-weight: 800;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--primary-blue);
+            border-radius: 25px;
+            color: var(--white);
+            letter-spacing: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .passcode-input:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 30px rgba(230, 71, 131, 0.5);
+            transform: scale(1.02);
+        }
+
+        .passcode-input.error {
+            border-color: var(--red);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 25px;
+        }
+
+        .error-message {
+            color: var(--red);
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .logo-container {
+                display: none;
+            }
+
+            .passcode-form {
+                padding: 40px 20px;
+            }
+
+            .passcode-form h1 {
+                font-size: 32px;
+            }
+
+            .passcode-input {
+                font-size: 36px;
+                letter-spacing: 5px;
+            }
+
+            .logo-placeholder {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="passcode-container">
+        <div class="logo-container">
+            <img src="/images/BeastPick.png" alt="Beast Pick Logo" id="logoArea">
+        </div>
+
+        <div class="passcode-form">
+            <h1>ADMIN PANEL</h1>
+            <h2>Enter Passcode</h2>
+
+            <div class="input-group">
+                <input
+                    type="tel"
+                    id="passcode"
+                    class="passcode-input"
+                    maxlength="6"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    placeholder="••••••"
+                    autocomplete="off"
+                >
+            </div>
+
+            <button class="btn btn-primary submit-btn" id="submitBtn">
+                LOGIN
+            </button>
+
+            <div class="error-message" id="errorMessage">
+                Invalid passcode
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        // Passcode input formatting
+        const passcodeInput = document.getElementById('passcode');
+
+        passcodeInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        // Submit handler - TEMPORARY BYPASS FOR DEVELOPMENT
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            // TEMPORARY: Skip authentication and go directly to admin panel
+            sessionStorage.setItem('authenticated', 'true');
+            sessionStorage.setItem('role', 'admin');
+            window.location.href = '/admin.html';
+
+            /* UNCOMMENT THIS WHEN API IS READY:
+            const passcode = passcodeInput.value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Reset error state
+            passcodeInput.classList.remove('error');
+            errorMessage.classList.remove('show');
+
+            // Validate
+            if (passcode.length !== 6) {
+                passcodeInput.classList.add('error');
+                errorMessage.textContent = 'Passcode must be 6 digits';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Attempt authentication
+            try {
+                const result = await validatePasscode(passcode, 'admin', null);
+
+                if (result.success) {
+                    // Store session
+                    sessionStorage.setItem('authenticated', 'true');
+                    sessionStorage.setItem('role', 'admin');
+
+                    // Redirect to admin panel
+                    window.location.href = '/admin.html';
+                } else {
+                    passcodeInput.classList.add('error');
+                    errorMessage.textContent = result.message || 'Invalid passcode';
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                errorMessage.textContent = 'Connection error. Please try again.';
+                errorMessage.classList.add('show');
+            }
+            */
+        });
+
+        // Enter key submission
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('submitBtn').click();
+            }
+        });
+
+        // Load logo if configured
+        loadLogo();
+    </script>
+</body>
+</html>

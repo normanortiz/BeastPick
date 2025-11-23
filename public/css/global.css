@@ -1,0 +1,276 @@
+@import url('https://fonts.cdnfonts.com/css/monument-extended');
+
+:root {
+    --primary-blue: #00bce7;
+    --primary-pink: #e64783;
+    --black: #000000;
+    --white: #ffffff;
+    --gray: #666666;
+    --red: #ff0000;
+
+    --font-family: 'Monument Extended', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility Classes */
+.bold {
+    font-weight: 800;
+}
+
+.text-blue {
+    color: var(--primary-blue);
+}
+
+.text-pink {
+    color: var(--primary-pink);
+}
+
+.text-white {
+    color: var(--white);
+}
+
+.bg-blue {
+    background: var(--primary-blue);
+}
+
+.bg-pink {
+    background: var(--primary-pink);
+}
+
+.bg-black {
+    background: var(--black);
+}
+
+/* Cool Border Effects for Player Cards */
+.player-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.player-card:not(.eliminated)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 3px;
+    background: var(--primary-blue);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.player-card:not(.eliminated):hover::before {
+    opacity: 1;
+}
+
+.player-card:not(.eliminated).selected {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 188, 231, 0.6);
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--font-family);
+    font-weight: 800;
+    font-size: 30px;
+    padding: 40px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    width: 100%;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 188, 231, 0.5);
+    background: #00d4ff;
+}
+
+.btn-primary:active {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(0, 188, 231, 0.7);
+    background: #00a8c7;
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--black);
+}
+
+.btn-secondary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    background: #f0f0f0;
+}
+
+.btn-secondary:active {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    background: #e0e0e0;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-10px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(10px);
+    }
+}
+
+@keyframes confetti {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+.pulse {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Lock Overlay */
+.lock-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.lock-overlay h1 {
+    font-size: 72px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.lock-overlay p {
+    font-size: 24px;
+    color: var(--white);
+    opacity: 0.8;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn {
+        font-size: 18px;
+        padding: 12px 30px;
+    }
+}

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beast Pick - Display Screen</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/global.css?v=6">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Passcode Screen */
+        .passcode-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        }
+
+        .logo-container {
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo-container img {
+            max-width: 400px;
+            height: auto;
+        }
+
+        .logo-placeholder {
+            font-size: 96px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+
+        .passcode-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 60px 40px;
+            border-radius: 30px;
+            position: relative;
+            animation: slideIn 0.8s ease-out 0.2s both;
+        }
+
+        .passcode-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 30px;
+            padding: 3px;
+            background: var(--primary-blue);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .passcode-form h1 {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .passcode-form h2 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .passcode-input {
+            width: 100%;
+            font-family: var(--font-family);
+            font-size: 48px;
+            font-weight: 800;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--primary-blue);
+            border-radius: 25px;
+            color: var(--white);
+            letter-spacing: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .passcode-input:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 30px rgba(230, 71, 131, 0.5);
+            transform: scale(1.02);
+        }
+
+        .passcode-input.error {
+            border-color: var(--red);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 25px;
+        }
+
+        .error-message {
+            color: var(--red);
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Display Screen - 1920x1080 Optimized */
+        .display-screen {
+            display: none;
+            width: 1920px;
+            height: 1080px;
+            background: #000;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow: visible;
+        }
+
+        .display-screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Players Grid */
+        .players-grid {
+            flex: 1;
+            display: grid;
+            gap: 4.2vh;
+            overflow: visible;
+            padding: 1.4vh;
+        }
+
+        /* Grid layouts for different player counts */
+        .grid-2x2 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .grid-3x2 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .grid-3x3 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
+        .grid-4x2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .grid-4x3 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
+        .grid-4x4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+        .grid-5x3 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(3, 1fr); }
+        .grid-5x4 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(4, 1fr); }
+        .grid-6x4 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(4, 1fr); }
+
+        /* Player Card */
+        .player-card {
+            position: relative;
+            background: linear-gradient(to bottom, #004d66, var(--primary-blue));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            border: none;
+        }
+
+        .player-card.leader {
+            box-shadow: 0 0 40px rgba(0, 188, 231, 0.8);
+        }
+
+        .player-card.eliminated {
+            background: linear-gradient(to bottom, #7a1e3d, #e64783) !important;
+            border: 3px solid #e64783 !important;
+        }
+
+        .player-card.eliminated {
+            background: linear-gradient(to bottom, #7a1e3d, var(--primary-pink));
+            border: 3px solid #e64783 !important;
+            box-shadow: none !important;
+        }
+
+        .player-card.eliminated .player-photo img {
+            filter: brightness(0.7) sepia(1) hue-rotate(290deg) saturate(3);
+        }
+
+        /* Dynamic border-radius classes based on player count */
+        .radius-xs { border-radius: 5px !important; }
+        .radius-sm { border-radius: 10px !important; }
+        .radius-md { border-radius: 20px !important; }
+        .radius-lg { border-radius: 30px !important; }
+        .radius-xl { border-radius: 50px !important; }
+
+        .player-number {
+            position: absolute;
+            top: 0.5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10vh;
+            font-weight: 800;
+            color: var(--white);
+            z-index: 1;
+            text-shadow: none;
+        }
+
+        .player-photo {
+            position: absolute;
+            top: 20%;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .player-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+        }
+
+        .player-photo-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 72px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .player-value-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background: linear-gradient(to bottom, rgba(0, 188, 231, 0), rgba(0, 188, 231, 1));
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .player-card.eliminated .player-value-gradient {
+            background: linear-gradient(to bottom, rgba(230, 71, 131, 0), rgba(230, 71, 131, 1));
+        }
+
+        .player-value {
+            position: absolute;
+            bottom: 1.5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4.5vh;
+            font-weight: 800;
+            color: var(--white);
+            z-index: 3;
+            text-shadow: 0 0.2vh 0.8vh rgba(0, 0, 0, 0.8);
+            white-space: nowrap;
+            max-width: 90%;
+        }
+
+        /* Locked Overlay */
+        .display-locked {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        .display-locked.active {
+            display: flex;
+        }
+
+        .display-locked h1 {
+            font-size: 96px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .display-locked p {
+            font-size: 36px;
+            color: var(--white);
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+
+
+        /* Responsive for smaller screens */
+        @media (max-width: 1920px) {
+            .display-screen {
+                width: 100vw;
+                height: 100vh;
+            }
+        }
+
+        .submit-btn {
+            width: 100%;
+            border-radius: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .logo-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Passcode Entry Screen -->
+    <div class="passcode-container" id="passcodeContainer">
+        <div class="logo-container">
+            <img src="/images/BeastPick.png" alt="Beast Pick Logo" id="logoArea">
+        </div>
+
+        <div class="passcode-form">
+            <h1>DISPLAY SCREEN</h1>
+            <h2>Enter Passcode</h2>
+
+            <div class="input-group">
+                <input
+                    type="tel"
+                    id="passcode"
+                    class="passcode-input"
+                    maxlength="6"
+                    pattern="[0-9]*"
+                    inputmode="numeric"
+                    placeholder="••••••"
+                    autocomplete="off"
+                >
+            </div>
+
+            <button class="btn btn-primary submit-btn" id="submitBtn">
+                LOGIN
+            </button>
+
+            <div class="error-message" id="errorMessage">
+                Invalid passcode
+            </div>
+        </div>
+    </div>
+
+    <!-- Display Screen -->
+    <div class="display-screen" id="displayScreen">
+        <div class="players-grid" id="playersGrid">
+            <!-- Player cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Locked Overlay -->
+    <div class="display-locked" id="displayLocked">
+        <h1>VOTING LOCKED</h1>
+        <p>Waiting for next round...</p>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/data.js"></script>
+    <script>
+        let currentUnit = 'lbs'; // Will be loaded from config
+
+        // Passcode input formatting
+        const passcodeInput = document.getElementById('passcode');
+
+        passcodeInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        // Submit handler - TEMPORARY BYPASS FOR DEVELOPMENT
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            sessionStorage.setItem('authenticated', 'true');
+            sessionStorage.setItem('role', 'display');
+            showDisplayScreen();
+        });
+
+        // Enter key submission
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('submitBtn').click();
+            }
+        });
+
+        // Show display screen
+        function showDisplayScreen() {
+            document.getElementById('passcodeContainer').style.display = 'none';
+            document.getElementById('displayScreen').classList.add('active');
+
+            // Load data once (polling disabled for testing)
+            loadDisplayData();
+            // TEMPORARILY DISABLED: setInterval(loadDisplayData, 2000);
+        }
+
+        /**
+         * Calculate border radius class based on player count
+         * Algorithm: More players = smaller radius for denser grids
+         *
+         * Examples:
+         * - 1-4 players (2x2 grid): radius-xl (50px) - Large, spacious cards
+         * - 5-9 players (3x3 grid): radius-lg (30px) - Medium-large cards
+         * - 10-16 players (4x4 grid): radius-md (20px) - Medium cards
+         * - 17-25 players (5x5 grid): radius-sm (10px) - Smaller cards
+         * - 26+ players: radius-xs (5px) - Densest layout
+         */
+        function calculateBorderRadiusClass(playerCount) {
+            if (playerCount <= 4) return 'radius-xl';   // 50px for 1-4 players
+            if (playerCount <= 9) return 'radius-lg';   // 30px for 5-9 players
+            if (playerCount <= 16) return 'radius-md';  // 20px for 10-16 players
+            if (playerCount <= 25) return 'radius-sm';  // 10px for 17-25 players
+            return 'radius-xs';                         // 5px for 26+ players
+        }
+
+        // Grid layout algorithm for 1920x1080
+        function calculateOptimalGrid(playerCount) {
+            if (playerCount <= 4) return { cols: 2, rows: 2, class: 'grid-2x2' };
+            if (playerCount <= 6) return { cols: 3, rows: 2, class: 'grid-3x2' };
+            if (playerCount <= 8) return { cols: 4, rows: 2, class: 'grid-4x2' };
+            if (playerCount <= 9) return { cols: 3, rows: 3, class: 'grid-3x3' };
+            if (playerCount <= 12) return { cols: 4, rows: 3, class: 'grid-4x3' };
+            if (playerCount <= 15) return { cols: 5, rows: 3, class: 'grid-5x3' };
+            if (playerCount <= 16) return { cols: 4, rows: 4, class: 'grid-4x4' };
+            if (playerCount <= 20) return { cols: 5, rows: 4, class: 'grid-5x4' };
+            if (playerCount <= 24) return { cols: 6, rows: 4, class: 'grid-6x4' };
+
+            return { cols: 6, rows: 4, class: 'grid-6x4' };
+        }
+
+        // Load display data
+        async function loadDisplayData() {
+            try {
+                // Get players from shared data store
+                const players = await getPlayers();
+                const config = await getGameConfig();
+                currentUnit = config.unit;
+
+                renderPlayers(players, config);
+            } catch (error) {
+                console.error('Error loading display data:', error);
+            }
+
+            /* UNCOMMENT WHEN API IS READY:
+            try {
+                const response = await fetch('/api/display-data');
+                const data = await response.json();
+                renderPlayers(data.players);
+                currentUnit = data.unit || 'lbs';
+            } catch (error) {
+                console.error('Error loading display data:', error);
+            }
+            */
+        }
+
+        // Render player cards
+        function renderPlayers(players, config = {}) {
+            const container = document.getElementById('playersGrid');
+
+            // Check if players is an array
+            if (!Array.isArray(players) || players.length === 0) {
+                console.warn('No players to render');
+                return;
+            }
+
+            // Filter players based on eliminatedPlayers setting
+            const eliminatedPlayersConfig = config.eliminatedPlayers || 'show';
+            let filteredPlayers = eliminatedPlayersConfig === 'hide'
+                ? players.filter(p => !p.eliminated && p.status !== 'Eliminated')
+                : players;
+
+            // Sort by player number
+            filteredPlayers.sort((a, b) => parseInt(a.number) - parseInt(b.number));
+
+            // Calculate grid layout based on filtered players
+            const layout = calculateOptimalGrid(filteredPlayers.length);
+            container.className = `players-grid ${layout.class}`;
+
+            // Calculate border radius class based on player count
+            const radiusClass = calculateBorderRadiusClass(filteredPlayers.length);
+
+            // Extract numeric values from voted field for leader highlighting
+            const votedValues = filteredPlayers.map(p => {
+                const voted = p.voted || '0';
+                const match = voted.match(/(\d+)/);
+                return match ? parseInt(match[1]) : 0;
+            });
+            const maxVoted = Math.max(...votedValues);
+
+            // Check playerName setting
+            const showPlayerName = (config.playerName || 'show') === 'show';
+
+            container.innerHTML = filteredPlayers.map(player => {
+                const voted = player.voted || '0';
+                const votedMatch = voted.match(/(\d+)/);
+                const votedNum = votedMatch ? parseInt(votedMatch[1]) : 0;
+                const isLeader = votedNum === maxVoted && votedNum > 0;
+                const isEliminated = player.eliminated || player.status === 'Eliminated';
+
+                const imageUrl = player.photoUrl || `/images/players/${player.number}.png`;
+
+                // Only show player value if playerName is 'show'
+                const playerValueHtml = showPlayerName
+                    ? `<div class="player-value">${voted}</div>`
+                    : '';
+
+                return `
+                    <div class="player-card ${radiusClass} ${isLeader ? 'leader' : ''} ${isEliminated ? 'eliminated' : ''}">
+                        <div class="player-number">${player.number}</div>
+                        <div class="player-photo">
+                            <img src="${imageUrl}" alt="${player.name}">
+                        </div>
+                        <div class="player-value-gradient"></div>
+                        ${playerValueHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Check if already authenticated
+        if (sessionStorage.getItem('authenticated') === 'true' && sessionStorage.getItem('role') === 'display') {
+            showDisplayScreen();
+        }
+    </script>
+</body>
+</html>

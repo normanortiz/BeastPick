@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beast Pick - Admin Panel</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/global.css">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            padding: 0;
+            margin: 0;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .admin-header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .lock-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .lock-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .lock-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 0;
+            font-family: var(--font-family);
+            font-size: 20px;
+            font-weight: 800;
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .tab:hover {
+            color: var(--white);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 45% 10% 45%;
+            gap: 0;
+            padding-top: 60px;
+        }
+
+        .control-panel {
+            padding-top: 60px;
+        }
+
+        .settings-column {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label,
+        .field-label {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--white);
+            text-transform: uppercase;
+        }
+
+        .input-with-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            flex-wrap: wrap;
+        }
+
+        .input-with-toggle .field-label {
+            width: 100%;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+        }
+
+        .input-with-toggle input[type="number"],
+        .input-with-toggle input[type="text"],
+        .input-with-toggle input[type="tel"] {
+            transition: all 0.3s ease;
+            flex: 1;
+            margin-right: 30px;
+        }
+
+        .input-with-toggle input.hidden {
+            display: none;
+        }
+
+        .input-with-toggle.no-input {
+            flex-wrap: nowrap;
+            justify-content: space-between;
+        }
+
+        .input-with-toggle.no-input .field-label {
+            width: auto;
+            flex: 0;
+        }
+
+        .input-with-toggle.no-input .toggle-switch {
+            flex: 0;
+        }
+
+        .input-with-toggle input,
+        .form-group .combobox-container {
+            flex: 1;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .input-with-toggle input,
+        .form-group input {
+            margin-top: 10px;
+            padding: 15px;
+            font-family: var(--font-family);
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px;
+            color: var(--white);
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-with-toggle input:hover,
+        .form-group input:hover,
+        .input-with-toggle input:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+        }
+
+        .file-input-wrapper {
+            margin-top: 10px;
+            padding: 15px;
+            font-family: var(--font-family);
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px;
+            color: var(--white);
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--primary-pink);
+        }
+
+        .file-browse-btn {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .file-browse-btn:hover {
+            background: var(--primary-pink);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray);
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-blue);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Combobox Custom Styling */
+        .combobox-container {
+            position: relative;
+            flex: 2;
+            width: 100%;
+        }
+
+        .combobox {
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            font-family: var(--font-family);
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .combobox:hover,
+        .combobox.open {
+            border-color: var(--primary-pink);
+        }
+
+        .combobox-arrow {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .combobox.open .combobox-arrow {
+            transform: rotate(180deg);
+        }
+
+        .combobox-options {
+            position: absolute;
+            top: calc(100% + 3px);
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border: none;
+            border-radius: 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            z-index: 1000;
+        }
+
+        .combobox-options.open {
+            max-height: 200px;
+            border: 2px solid var(--primary-pink);
+        }
+
+        .combobox-option {
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-family: var(--font-family);
+            font-size: 18px;
+            color: var(--white);
+        }
+
+        .combobox-option:first-child:hover {
+            background: rgba(230, 71, 131, 0.2);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .combobox-option:last-child:hover {
+            background: rgba(230, 71, 131, 0.2);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .combobox-option:not(:first-child):not(:last-child):hover {
+            background: rgba(230, 71, 131, 0.2);
+        }
+
+        .combobox-option.selected {
+            background: rgba(230, 71, 131, 0.4);
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .control-card {
+            background: rgba(0, 188, 231, 0.1);
+            border: 2px solid var(--primary-blue);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .control-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+
+        .control-card .btn {
+            margin-top: 10px;
+            font-size: 20px;
+            padding: 15px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.active {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .status-indicator.inactive {
+            background: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        /* Table Styling */
+        .table-container {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover,
+        .icon-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            table-layout: fixed;
+        }
+
+        #votingTable {
+            table-layout: fixed;
+        }
+
+        #votingTable th:nth-child(1),
+        #votingTable td:nth-child(1) {
+            width: 15%;
+        }
+
+        #votingTable th:nth-child(2),
+        #votingTable td:nth-child(2) {
+            width: 15%;
+        }
+
+        #votingTable th:nth-child(3),
+        #votingTable td:nth-child(3) {
+            width: 15%;
+        }
+
+        #votingTable th:nth-child(4),
+        #votingTable td:nth-child(4) {
+            width: 15%;
+        }
+
+        #votingTable th:nth-child(5),
+        #votingTable td:nth-child(5) {
+            width: 40%;
+        }
+
+        thead {
+            background: rgba(0, 188, 231, 0.2);
+        }
+
+        th {
+            padding: 20px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+        }
+
+        tr:hover {
+            background: rgba(0, 188, 231, 0.1);
+        }
+
+        .editable-number,
+        .editable-name,
+        .editable-voted {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .editable-number:hover,
+        .editable-name:hover,
+        .editable-voted:hover {
+            background: rgba(0, 188, 231, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .admin-logo {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header h1 {
+                font-size: 32px;
+            }
+
+            .tab {
+                font-size: 16px;
+                padding: 0;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group input,
+            .form-group .combobox-container {
+                width: 100%;
+            }
+
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .tab {
+                padding-top: 20px;
+                font-size: 13.6px;
+            }
+        }
+
+        /* Hide file input */
+        #csvFileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="tabs">
+                <button class="tab active" data-tab="control">CONTROL</button>
+                <button class="tab" data-tab="players">PLAYERS</button>
+                <button class="tab" data-tab="voting">VOTING</button>
+                <button class="tab" data-tab="config">SETTINGS</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="/images/BeastPick.png" alt="Beast Pick Logo" class="admin-logo">
+                <button class="lock-btn" onclick="logout()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="11" width="14" height="10" rx="2" stroke="white" stroke-width="2" opacity="0.6"/>
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <circle cx="12" cy="16" r="1.5" fill="white" opacity="0.6"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Control Tab -->
+        <div class="tab-content active" id="control">
+            <div class="control-panel">
+                <div class="control-card">
+                    <h3>VOTING STATUS</h3>
+                    <p><span class="status-indicator inactive"></span>Voting Locked</p>
+                    <button class="btn btn-primary">START VOTING</button>
+                    <button class="btn btn-secondary">LOCK VOTING</button>
+                </div>
+
+                <div class="control-card">
+                    <h3>ROUND CONTROL</h3>
+                    <p id="currentRoundDisplay" style="font-size: 48px; font-weight: 800; color: var(--primary-blue);">1</p>
+                    <p>Current Round</p>
+                    <button class="btn btn-primary" onclick="startNewRound()">NEXT ROUND</button>
+                </div>
+
+                <div class="control-card">
+                    <h3>RESET OPTIONS</h3>
+                    <button class="btn btn-primary" onclick="resetAllVotes()">RESET ALL VOTES</button>
+                    <button class="btn btn-secondary" onclick="resetPlayerVote()">RESET PLAYER</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Tab -->
+        <div class="tab-content" id="players">
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-actions">
+                        <button class="icon-btn" title="Import CSV" onclick="document.getElementById('csvFileInput').click()">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="icon-btn" title="Export CSV" onclick="exportPlayersCSV()">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 15V3m0 0l-4 4m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="icon-btn" title="Add Player" onclick="addPlayerToTable()">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5v14m-7-7h14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <input type="file" id="csvFileInput" accept=".csv" onchange="importPlayersCSV(event)">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Voted</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playersTableBody">
+                        <tr>
+                            <td>001</td>
+                            <td>Player One</td>
+                            <td>Active</td>
+                            <td>150 lbs</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Player Two</td>
+                            <td>Active</td>
+                            <td>225 lbs</td>
+                        </tr>
+                        <tr>
+                            <td>009</td>
+                            <td>Supercalifragilisticespi</td>
+                            <td>Eliminated</td>
+                            <td>165 lbs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" id="config">
+            <div class="settings-grid">
+                <!-- Left Column -->
+                <div class="settings-column">
+                    <div class="form-group">
+                        <label>Voting Mode</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedVotingMode">Player</span>
+                                <svg class="combobox-arrow" width="12" height="8" viewBox="0 0 12 8" fill="white">
+                                    <path d="M1 1l5 5 5-5"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option selected" onclick="selectOption(this, 'player')">Player</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'quantity-player')">Quantity & Player</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'option-player')">Option & Player</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Submission Style</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedSubmissionStyle">Instant Submit</span>
+                                <svg class="combobox-arrow" width="12" height="8" viewBox="0 0 12 8" fill="white">
+                                    <path d="M1 1l5 5 5-5"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option selected" onclick="selectOption(this, 'instant')">Instant Submit</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'batch')">Batch Submit</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'timed-batch')">Timed Batch</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Player's Name</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedPlayerName">Show</span>
+                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option" onclick="selectOption(this, 'show')">Show</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'hide')">Hide</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Eliminated Players</label>
+                        <div class="combobox-container">
+                            <div class="combobox" onclick="toggleCombobox(this)">
+                                <span id="selectedEliminatedPlayers">Show</span>
+                                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="combobox-options">
+                                <div class="combobox-option" onclick="selectOption(this, 'show')">Show</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'hide')">Hide</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Column (Empty) -->
+                <div></div>
+
+                <!-- Right Column -->
+                <div class="settings-column">
+                    <div class="form-group" id="voteIncrementGroup">
+                        <label class="field-label">Vote Increment</label>
+                        <input type="number" id="voteIncrement" value="1" placeholder="1" oninput="autoSaveSettings()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" min="1" step="1">
+                    </div>
+
+                    <div class="form-group" id="unitGroup">
+                        <label class="field-label">Unit of Measurement</label>
+                        <input type="text" id="unit" value="" placeholder="" maxlength="3" oninput="autoSaveSettings()">
+                    </div>
+
+                    <div class="form-group" id="option1Group" style="display: none;">
+                        <label class="field-label">Option 1</label>
+                        <input type="text" id="option1Label" value="Yes" placeholder="Yes" oninput="autoSaveSettings()">
+                    </div>
+
+                    <div class="form-group" id="option2Group" style="display: none;">
+                        <label class="field-label">Option 2</label>
+                        <input type="text" id="option2Label" value="No" placeholder="No" oninput="autoSaveSettings()">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Logo</label>
+                        <input type="file" id="logoUpload" accept=".png" style="display: none;" onchange="handleLogoUpload(event)">
+                        <div class="file-input-wrapper" onclick="document.getElementById('logoUpload').click()">
+                            <span id="logoFileName">No file chosen</span>
+                            <button type="button" class="file-browse-btn">Browse</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="timerDurationGroup">
+                        <label class="field-label">Timer Duration (seconds)</label>
+                        <input type="number" id="timerDuration" value="60" placeholder="60" oninput="autoSaveSettings()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" min="1" step="1">
+                    </div>
+
+                    <div class="form-group" id="securityPasscodeGroup">
+                        <label class="field-label">Security Passcode</label>
+                        <input type="tel" id="securityPasscode" value="123456" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" oninput="validatePasscode(this)" onchange="autoSaveSettings()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voting Tab -->
+        <div class="tab-content" id="voting">
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-actions">
+                        <button class="icon-btn" title="Export CSV" onclick="exportVotingCSV()">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 15V3m0 0l-4 4m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <table id="votingTable">
+                    <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th>Player</th>
+                            <th>Target</th>
+                            <th>Voted</th>
+                            <th>When</th>
+                        </tr>
+                    </thead>
+                    <tbody id="votingTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>001</td>
+                            <td>002</td>
+                            <td>15 lbs</td>
+                            <td>2025-01-22 14:35:22</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/data.js"></script>
+    <script>
+        // Check authentication
+        if (!checkAuthentication('admin')) {
+            // Will redirect if not authenticated
+        }
+
+        // Load players table
+        async function loadPlayersTable() {
+            const players = await getPlayers();
+            const config = await getGameConfig();
+            const tbody = document.getElementById('playersTableBody');
+
+            tbody.innerHTML = players.map(player => `
+                <tr data-player-id="${player.id}">
+                    <td class="editable-number" data-player-id="${player.id}" data-field="number">${player.number}</td>
+                    <td class="editable-name" data-player-id="${player.id}" data-field="name">${player.name}</td>
+                    <td class="status-toggle" data-player-id="${player.id}" style="cursor: pointer;">${player.status}</td>
+                    <td class="editable-voted" data-player-id="${player.id}" data-field="voted">${player.voted !== undefined && player.voted !== null ? player.voted : ''}</td>
+                </tr>
+            `).join('');
+
+            // Add click handlers for editable fields
+            document.querySelectorAll('.editable-number, .editable-name, .editable-voted').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    makeEditable(this);
+                });
+            });
+
+            // Add click handler for status toggle
+            document.querySelectorAll('.status-toggle').forEach(cell => {
+                cell.addEventListener('click', async function() {
+                    const playerId = parseInt(this.dataset.playerId);
+                    const currentStatus = this.textContent.trim();
+                    const newStatus = currentStatus === 'Active' ? 'Eliminated' : 'Active';
+
+                    await updatePlayer(playerId, { status: newStatus });
+                    this.textContent = newStatus;
+
+                    // Visual feedback for auto-save
+                    this.style.background = 'rgba(0, 188, 231, 0.3)';
+                    setTimeout(() => {
+                        this.style.background = '';
+                    }, 300);
+                });
+            });
+        }
+
+        // Make cell editable
+        function makeEditable(cell) {
+            const playerId = parseInt(cell.dataset.playerId);
+            const field = cell.dataset.field;
+            const currentText = cell.textContent.trim();
+
+            // Create input field
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.style.cssText = 'background: transparent; border: none; color: var(--white); font-family: var(--font-family); font-size: 16px; width: 100%; outline: none;';
+
+            // Replace cell content with input
+            cell.textContent = '';
+            cell.appendChild(input);
+            input.focus();
+            input.select();
+
+            // Save on blur or enter
+            const saveEdit = async () => {
+                const newValue = input.value.trim();
+                if (newValue && newValue !== currentText) {
+                    await updatePlayer(playerId, { [field]: newValue });
+                    cell.textContent = newValue;
+
+                    // Visual feedback for auto-save
+                    cell.style.background = 'rgba(0, 188, 231, 0.3)';
+                    setTimeout(() => {
+                        cell.style.background = '';
+                    }, 300);
+                } else {
+                    cell.textContent = currentText;
+                }
+            };
+
+            input.addEventListener('blur', saveEdit);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur();
+                }
+            });
+        }
+
+        // Load saved settings
+        async function loadSavedSettings() {
+            try {
+                const config = await getGameConfig();
+
+                // Update combobox values
+                if (config.votingMode) {
+                    const votingModeText = config.votingMode.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(/ And /g, ' & ');
+                    document.getElementById('selectedVotingMode').textContent = votingModeText;
+                }
+
+                if (config.submissionStyle) {
+                    const submissionStyleText = config.submissionStyle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    document.getElementById('selectedSubmissionStyle').textContent = submissionStyleText;
+                }
+
+                if (config.playerName) {
+                    document.getElementById('selectedPlayerName').textContent = config.playerName.charAt(0).toUpperCase() + config.playerName.slice(1);
+                }
+
+                if (config.eliminatedPlayers) {
+                    document.getElementById('selectedEliminatedPlayers').textContent = config.eliminatedPlayers.charAt(0).toUpperCase() + config.eliminatedPlayers.slice(1);
+                }
+
+                // Update input values
+                if (config.voteIncrement !== undefined) {
+                    document.getElementById('voteIncrement').value = config.voteIncrement;
+                }
+
+                if (config.unit !== undefined) {
+                    document.getElementById('unit').value = config.unit;
+                }
+
+                if (config.timerDuration !== undefined) {
+                    document.getElementById('timerDuration').value = config.timerDuration;
+                }
+
+                if (config.option1Label !== undefined) {
+                    document.getElementById('option1Label').value = config.option1Label;
+                }
+
+                if (config.option2Label !== undefined) {
+                    document.getElementById('option2Label').value = config.option2Label;
+                }
+
+                if (config.securityPasscode !== undefined) {
+                    document.getElementById('securityPasscode').value = config.securityPasscode;
+                }
+
+                if (config.currentRound !== undefined) {
+                    document.getElementById('currentRoundDisplay').textContent = config.currentRound;
+                }
+
+                if (config.customLogo) {
+                    document.getElementById('logoFileName').textContent = 'Custom logo uploaded';
+                }
+
+                // Update voting mode visibility
+                updateVotingModeVisibility();
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        // Load players on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlayersTable();
+            loadSavedSettings();
+
+            // Add event listeners to settings inputs for auto-save
+            document.getElementById('voteIncrement')?.addEventListener('change', autoSaveSettings);
+            document.getElementById('unit')?.addEventListener('change', autoSaveSettings);
+            document.getElementById('timerDuration')?.addEventListener('change', autoSaveSettings);
+            document.getElementById('securityPasscode')?.addEventListener('change', autoSaveSettings);
+
+            // Initialize voting mode visibility
+            updateVotingModeVisibility();
+        });
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(targetTab).classList.add('active');
+            });
+        });
+
+        // Combobox functionality
+        function toggleCombobox(element) {
+            const container = element.parentElement;
+            const options = container.querySelector('.combobox-options');
+            element.classList.toggle('open');
+            options.classList.toggle('open');
+
+            // Close when clicking outside
+            if (element.classList.contains('open')) {
+                setTimeout(() => {
+                    document.addEventListener('click', function closeCombobox(e) {
+                        if (!container.contains(e.target)) {
+                            element.classList.remove('open');
+                            options.classList.remove('open');
+                            document.removeEventListener('click', closeCombobox);
+                        }
+                    });
+                }, 0);
+            }
+        }
+
+        function selectOption(optionElement, value) {
+            const container = optionElement.parentElement.parentElement;
+            const combobox = container.querySelector('.combobox');
+
+            // Handle different combobox types
+            let selectedText;
+            if (container.querySelector('#selectedVotingMode')) {
+                selectedText = container.querySelector('#selectedVotingMode');
+            } else if (container.querySelector('#selectedSubmissionStyle')) {
+                selectedText = container.querySelector('#selectedSubmissionStyle');
+            } else if (container.querySelector('#selectedEliminatedPlayers')) {
+                selectedText = container.querySelector('#selectedEliminatedPlayers');
+            } else {
+                selectedText = container.querySelector('#selectedMode');
+            }
+
+            const allOptions = container.querySelectorAll('.combobox-option');
+
+            allOptions.forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            selectedText.textContent = optionElement.textContent;
+
+            combobox.classList.remove('open');
+            optionElement.parentElement.classList.remove('open');
+
+            // Update visibility based on voting mode
+            updateVotingModeVisibility();
+
+            autoSaveSettings();
+        }
+
+        // Update voting mode visibility
+        function updateVotingModeVisibility() {
+            const votingMode = document.querySelector('#selectedVotingMode')?.textContent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') || 'player';
+            const voteIncrementGroup = document.getElementById('voteIncrementGroup');
+            const unitGroup = document.getElementById('unitGroup');
+            const option1Group = document.getElementById('option1Group');
+            const option2Group = document.getElementById('option2Group');
+
+            // Show/hide fields based on voting mode
+            if (votingMode === 'quantity-player') {
+                voteIncrementGroup.style.display = 'block';
+                unitGroup.style.display = 'block';
+                option1Group.style.display = 'none';
+                option2Group.style.display = 'none';
+            } else if (votingMode === 'option-player') {
+                voteIncrementGroup.style.display = 'none';
+                unitGroup.style.display = 'none';
+                option1Group.style.display = 'block';
+                option2Group.style.display = 'block';
+            } else {
+                voteIncrementGroup.style.display = 'none';
+                unitGroup.style.display = 'none';
+                option1Group.style.display = 'none';
+                option2Group.style.display = 'none';
+            }
+        }
+
+        // Auto-save settings
+        async function autoSaveSettings() {
+            try {
+                // Collect all settings
+                const settings = {
+                    votingMode: document.querySelector('#selectedVotingMode')?.textContent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') || 'player',
+                    submissionStyle: document.querySelector('#selectedSubmissionStyle')?.textContent.toLowerCase().replace(/ /g, '-') || 'instant-submit',
+                    playerName: document.querySelector('#selectedPlayerName')?.textContent.toLowerCase() || 'show',
+                    eliminatedPlayers: document.querySelector('#selectedEliminatedPlayers')?.textContent.toLowerCase() || 'show',
+                    voteIncrement: parseInt(document.getElementById('voteIncrement')?.value) || 15,
+                    unit: document.getElementById('unit')?.value || 'lbs',
+                    timerDuration: parseInt(document.getElementById('timerDuration')?.value) || 60,
+                    option1Label: document.getElementById('option1Label')?.value || 'Yes',
+                    option2Label: document.getElementById('option2Label')?.value || 'No',
+                    securityPasscode: document.getElementById('securityPasscode')?.value || ''
+                };
+
+                // Save to backend
+                await updateGameConfig(settings);
+                console.log('Settings auto-saved:', settings);
+            } catch (error) {
+                console.error('Error saving settings:', error);
+            }
+        }
+
+        // Start new round
+        async function startNewRound() {
+            if (!confirm('Are you sure you want to start a new round? This will refresh all voting pages.')) {
+                return;
+            }
+
+            try {
+                const config = await getGameConfig();
+                const newRound = (config.currentRound || 1) + 1;
+
+                await updateGameConfig({ currentRound: newRound });
+
+                // Update the display
+                document.getElementById('currentRoundDisplay').textContent = newRound;
+
+                alert(`New round ${newRound} started! All voting pages will refresh.`);
+            } catch (error) {
+                console.error('Error starting new round:', error);
+                alert('Error starting new round');
+            }
+        }
+
+        // Reset all votes
+        async function resetAllVotes() {
+            if (!confirm('Are you sure you want to reset ALL votes? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                // TODO: Implement API call to reset all votes
+                alert('Reset all votes functionality to be implemented');
+            } catch (error) {
+                console.error('Error resetting all votes:', error);
+                alert('Error resetting all votes');
+            }
+        }
+
+        // Reset individual player vote
+        async function resetPlayerVote() {
+            const playerNumber = prompt('Enter the player number to reset their vote:');
+
+            if (!playerNumber) {
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to reset votes for player ${playerNumber}?`)) {
+                return;
+            }
+
+            try {
+                // TODO: Implement API call to reset player vote
+                alert(`Reset vote for player ${playerNumber} - functionality to be implemented`);
+            } catch (error) {
+                console.error('Error resetting player vote:', error);
+                alert('Error resetting player vote');
+            }
+        }
+
+        // Toggle input field visibility based on switch state
+        function toggleInput(checkbox) {
+            const container = checkbox.closest('.input-with-toggle');
+            const inputField = container.querySelector('input[type="number"], input[type="text"], input[type="tel"]');
+
+            if (checkbox.checked) {
+                inputField.classList.remove('hidden');
+                container.classList.remove('no-input');
+            } else {
+                inputField.classList.add('hidden');
+                container.classList.add('no-input');
+            }
+
+            autoSaveSettings();
+        }
+
+        // Validate passcode (must be exactly 6 digits)
+        function validatePasscode(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 6);
+        }
+
+        // Handle logo upload
+        async function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file type
+            if (!file.type.match('image/png')) {
+                alert('Only PNG files are allowed');
+                event.target.value = '';
+                return;
+            }
+
+            // Update file name display
+            document.getElementById('logoFileName').textContent = file.name;
+
+            // Convert to base64 and save
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const logoDataUrl = e.target.result;
+
+                try {
+                    await updateGameConfig({ customLogo: logoDataUrl });
+                    alert('Logo uploaded successfully!');
+                } catch (error) {
+                    console.error('Error saving logo:', error);
+                    alert('Error saving logo');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Players management
+        async function addPlayerToTable() {
+            try {
+                console.log('Add Player button clicked');
+                const players = await getPlayers();
+                console.log('Current players:', players);
+                const maxId = Math.max(...players.map(p => p.id), 0);
+                const newId = maxId + 1;
+                const newPlayerNumber = String(newId).padStart(3, '0');
+                const newPlayer = {
+                    id: newId,
+                    number: newPlayerNumber,
+                    name: `Player ${newPlayerNumber}`,
+                    photoUrl: null,
+                    status: 'Active',
+                    voted: '0 lbs'
+                };
+                console.log('Adding new player:', newPlayer);
+                const result = await addPlayer(newPlayer);
+                console.log('Add player result:', result);
+                await loadPlayersTable();
+                console.log('Table reloaded');
+            } catch (error) {
+                console.error('Error adding player:', error);
+            }
+        }
+
+        async function exportPlayersCSV() {
+            const players = await getPlayers();
+            const config = await getGameConfig();
+
+            // Create CSV content
+            let csv = 'Number,Name,Status,Voted\n';
+            players.forEach(player => {
+                csv += `${player.number},"${player.name}",${player.status},"${player.voted}"\n`;
+            });
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'players.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        async function importPlayersCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                const players = await getPlayers();
+
+                // Skip header line, parse CSV
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+
+                    // Simple CSV parsing (handles quoted fields)
+                    const matches = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
+                    if (matches && matches.length >= 4) {
+                        const number = matches[0].replace(/"/g, '');
+                        const name = matches[1].replace(/"/g, '');
+                        const status = matches[2].replace(/"/g, '');
+                        const voted = matches[3].replace(/"/g, '');
+
+                        const existingPlayer = players.find(p => p.number === number);
+                        if (existingPlayer) {
+                            await updatePlayer(existingPlayer.id, { name, status, voted });
+                        } else {
+                            await addPlayer({
+                                id: Math.max(...players.map(p => p.id), 0) + 1,
+                                number,
+                                name,
+                                photoUrl: null,
+                                status,
+                                voted,
+                                eliminated: status === 'Eliminated'
+                            });
+                        }
+                    }
+                }
+
+                await loadPlayersTable();
+            };
+            reader.readAsText(file);
+
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Voting management
+        function exportVotingCSV() {
+            const votingData = [
+                { round: 1, player: '001', target: '002', votes: '15 lbs', when: '2025-01-22 14:35:22' }
+            ];
+
+            // Create CSV content
+            let csv = 'Round,Player,Target,Votes,When\n';
+            votingData.forEach(vote => {
+                csv += `${vote.round},${vote.player},${vote.target},"${vote.votes}","${vote.when}"\n`;
+            });
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'voting_data.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
