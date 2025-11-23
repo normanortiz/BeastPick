@@ -291,11 +291,11 @@ body {
 }
 
 /* Dynamic border-radius classes based on player count */
-.radius-xs { border-radius: 0px !important; }
-.radius-sm { border-radius: 5px !important; }
-.radius-md { border-radius: 15px !important; }
-.radius-lg { border-radius: 28px !important; }
-.radius-xl { border-radius: 50px !important; }
+.radius-xs { border-radius: 5px !important; }
+.radius-sm { border-radius: 10px !important; }
+.radius-md { border-radius: 20px !important; }
+.radius-lg { border-radius: 33px !important; }
+.radius-xl { border-radius: 55px !important; }
 
 /* Player Card */
 .player-card {
