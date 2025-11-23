@@ -261,39 +261,40 @@ html, body {
     align-content: center;
     padding: 15px;
     max-height: 100%;
+    justify-content: center;
 }
 
 /* Grid layouts for different player counts */
 .grid-2x2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 300px));
 }
 
 .grid-2x3 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 300px));
 }
 
 .grid-3x3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 200px));
 }
 
 .grid-3x4 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 200px));
 }
 
 .grid-4x4 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 180px));
 }
 
 .grid-4x5 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 180px));
 }
 
 .grid-5x5 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 150px));
 }
 
 .grid-5x6 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 150px));
 }
 
 /* Dynamic border-radius classes based on player count */
