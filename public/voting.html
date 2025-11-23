@@ -93,6 +93,8 @@
     <script src="/js/data.js"></script>
     <script src="/js/contestant.js?v=10"></script>
     <script>
+        console.log('=== VOTING.HTML SCRIPT LOADED ===');
+
         // Check authentication (bypassed for development)
         // if (!checkAuthentication('contestant')) {
         //     // Will redirect if not authenticated
@@ -283,6 +285,7 @@
         }
 
         // Initialize voting lock state watcher when page loads
+        console.log('About to call watchVotingLockState()...');
         watchVotingLockState();
     </script>
 </body>
