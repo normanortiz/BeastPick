@@ -632,7 +632,7 @@
         function startTimer() {
             updateTimerDisplay();
 
-            timerInterval = setInterval(() => {
+            timerInterval = setInterval(async () => {
                 if (timeRemaining > 0) {
                     timeRemaining--;
                     updateTimerDisplay();
@@ -640,6 +640,13 @@
                     // Timer reached 0:00
                     clearInterval(timerInterval);
                     lockDisplay();
+
+                    // Ensure voting is locked in Firebase (admin will also do this)
+                    try {
+                        await updateGameConfig({ votingLocked: true });
+                    } catch (error) {
+                        console.error('Error updating voting lock:', error);
+                    }
                 }
             }, 1000);
         }

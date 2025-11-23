@@ -1545,13 +1545,24 @@
 
                     if (adminTimerInterval) clearInterval(adminTimerInterval);
 
-                    adminTimerInterval = setInterval(() => {
+                    adminTimerInterval = setInterval(async () => {
                         if (adminTimeRemaining > 0) {
                             adminTimeRemaining--;
                             updateAdminTimerDisplay();
                         } else {
+                            // Timer reached 0 - automatically lock voting
                             clearInterval(adminTimerInterval);
                             document.getElementById('adminTimerDisplay').style.display = 'none';
+
+                            try {
+                                // Lock voting in Firebase
+                                await updateGameConfig({ votingLocked: true });
+                                // Update UI
+                                updateVotingLockUI(true);
+                                console.log('Voting automatically locked - timer expired');
+                            } catch (error) {
+                                console.error('Error auto-locking voting:', error);
+                            }
                         }
                     }, 1000);
                 } else {
