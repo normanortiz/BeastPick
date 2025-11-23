@@ -382,6 +382,8 @@
             border-radius: 15px;
             padding: 25px;
             text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
         .control-card h3 {
@@ -390,8 +392,18 @@
             color: var(--primary-blue);
         }
 
+        .control-card-content {
+            flex: 1;
+        }
+
+        .control-card-buttons {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .control-card .btn {
-            margin-top: 10px;
             font-size: 20px;
             padding: 15px;
         }
@@ -744,25 +756,35 @@
         <div class="tab-content active" id="control">
             <div class="control-panel">
                 <div class="control-card">
-                    <h3>VOTING STATUS</h3>
-                    <p><span class="status-indicator inactive"></span>Voting Locked</p>
-                    <button class="btn btn-primary">START VOTING</button>
-                    <button class="btn btn-secondary">LOCK VOTING</button>
+                    <h3>VOTING</h3>
+                    <div class="control-card-content">
+                        <p><span class="status-indicator inactive"></span>Voting Locked</p>
+                    </div>
+                    <div class="control-card-buttons">
+                        <button class="btn btn-primary">START</button>
+                        <button class="btn btn-secondary">LOCK</button>
+                    </div>
                 </div>
 
                 <div class="control-card">
-                    <h3>ROUND CONTROL</h3>
-                    <p id="currentRoundDisplay" style="font-size: 48px; font-weight: 800; color: var(--primary-blue);">1</p>
-                    <p>Current Round</p>
-                    <button class="btn btn-primary" onclick="startNewRound()">NEXT ROUND</button>
-                    <button class="btn btn-secondary" onclick="restartGame()">RESTART</button>
+                    <h3>ROUND</h3>
+                    <div class="control-card-content">
+                        <p id="currentRoundDisplay" style="font-size: 48px; font-weight: 800; color: var(--primary-blue);">1</p>
+                    </div>
+                    <div class="control-card-buttons">
+                        <button class="btn btn-primary" onclick="startNewRound()">NEXT ROUND</button>
+                        <button class="btn btn-secondary" onclick="restartGame()">RESTART</button>
+                    </div>
                 </div>
 
                 <div class="control-card">
-                    <h3>RESET OPTIONS</h3>
-                    <button class="btn btn-primary" onclick="resetAllVotes()">RESET ALL VOTES</button>
-                    <button class="btn btn-secondary" onclick="resetPlayerVote()">RESET PLAYER</button>
-                    <button class="btn btn-secondary" onclick="resetLastRound()">RESET LAST ROUND</button>
+                    <h3>RESET</h3>
+                    <div class="control-card-content"></div>
+                    <div class="control-card-buttons">
+                        <button class="btn btn-primary" onclick="resetAllVotes()">ALL VOTES</button>
+                        <button class="btn btn-secondary" onclick="resetPlayerVote()">PLAYER</button>
+                        <button class="btn btn-secondary" onclick="resetLastRound()">LAST ROUND</button>
+                    </div>
                 </div>
             </div>
         </div>
