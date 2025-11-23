@@ -590,9 +590,136 @@
         #csvFileInput {
             display: none;
         }
+
+        /* Reset Modals */
+        .reset-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .reset-modal .modal-content {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 188, 231, 0.3);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .reset-modal .modal-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 18px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(0, 188, 231, 0.2), rgba(247, 34, 127, 0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .reset-modal .modal-content h2 {
+            font-family: var(--font-family);
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .reset-modal .modal-content p {
+            font-family: var(--font-family);
+            font-size: 16px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
     </style>
 </head>
 <body>
+    <!-- Reset All Votes Modal -->
+    <div class="reset-modal" id="resetAllModal" style="display: none;">
+        <div class="modal-content">
+            <h2>RESET ALL VOTES</h2>
+            <p>This will permanently delete all votes. This cannot be undone.</p>
+            <p style="margin-top: 20px; font-size: 14px; color: var(--gray);">Enter admin passcode to confirm:</p>
+            <input type="password" id="resetAllPasscode" class="passcode-input" maxlength="6" placeholder="000000" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
+            <div class="modal-buttons" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="cancelResetAllBtn">CANCEL</button>
+                <button class="btn btn-primary" id="confirmResetAllBtn">RESET ALL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Player Vote Modal -->
+    <div class="reset-modal" id="resetPlayerModal" style="display: none;">
+        <div class="modal-content">
+            <h2>RESET PLAYER VOTE</h2>
+            <p>Enter the player number to reset their votes:</p>
+            <input type="text" id="resetPlayerNumber" class="player-input" placeholder="001" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
+            <p style="margin-top: 20px; font-size: 14px; color: var(--gray);">Enter admin passcode to confirm:</p>
+            <input type="password" id="resetPlayerPasscode" class="passcode-input" maxlength="6" placeholder="000000" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
+            <div class="modal-buttons" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="cancelResetPlayerBtn">CANCEL</button>
+                <button class="btn btn-primary" id="confirmResetPlayerBtn">RESET PLAYER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Last Round Modal -->
+    <div class="reset-modal" id="resetRoundModal" style="display: none;">
+        <div class="modal-content">
+            <h2>RESET LAST ROUND</h2>
+            <p>This will delete all votes from round <span id="lastRoundNumber"></span>. This cannot be undone.</p>
+            <p style="margin-top: 20px; font-size: 14px; color: var(--gray);">Enter admin passcode to confirm:</p>
+            <input type="password" id="resetRoundPasscode" class="passcode-input" maxlength="6" placeholder="000000" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
+            <div class="modal-buttons" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="cancelResetRoundBtn">CANCEL</button>
+                <button class="btn btn-primary" id="confirmResetRoundBtn">RESET ROUND</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restart Modal -->
+    <div class="reset-modal" id="restartModal" style="display: none;">
+        <div class="modal-content">
+            <h2>RESTART GAME</h2>
+            <p>This will reset the game to Round 1 and clear all votes. This cannot be undone.</p>
+            <p style="margin-top: 20px; font-size: 14px; color: var(--gray);">Enter admin passcode to confirm:</p>
+            <input type="password" id="restartPasscode" class="passcode-input" maxlength="6" placeholder="000000" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
+            <div class="modal-buttons" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="cancelRestartBtn">CANCEL</button>
+                <button class="btn btn-primary" id="confirmRestartBtn">RESTART</button>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-container">
         <div class="admin-header">
             <div class="tabs">
@@ -628,12 +755,14 @@
                     <p id="currentRoundDisplay" style="font-size: 48px; font-weight: 800; color: var(--primary-blue);">1</p>
                     <p>Current Round</p>
                     <button class="btn btn-primary" onclick="startNewRound()">NEXT ROUND</button>
+                    <button class="btn btn-secondary" onclick="restartGame()">RESTART</button>
                 </div>
 
                 <div class="control-card">
                     <h3>RESET OPTIONS</h3>
                     <button class="btn btn-primary" onclick="resetAllVotes()">RESET ALL VOTES</button>
                     <button class="btn btn-secondary" onclick="resetPlayerVote()">RESET PLAYER</button>
+                    <button class="btn btn-secondary" onclick="resetLastRound()">RESET LAST ROUND</button>
                 </div>
             </div>
         </div>
@@ -1171,40 +1300,65 @@
             }
         }
 
-        // Reset all votes
-        async function resetAllVotes() {
-            if (!confirm('Are you sure you want to reset ALL votes? This cannot be undone.')) {
-                return;
+        // Helper function to verify passcode
+        async function verifyPasscode(inputPasscode) {
+            const config = await getGameConfig();
+            const adminPasscode = config.securityPasscode || '';
+
+            // If no passcode is set, allow the action
+            if (!adminPasscode) {
+                return true;
             }
 
-            try {
-                // TODO: Implement API call to reset all votes
-                alert('Reset all votes functionality to be implemented');
-            } catch (error) {
-                console.error('Error resetting all votes:', error);
-                alert('Error resetting all votes');
+            return inputPasscode === adminPasscode;
+        }
+
+        // Show modal helper
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
             }
+        }
+
+        // Hide modal helper
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                // Clear input fields
+                const inputs = modal.querySelectorAll('input');
+                inputs.forEach(input => input.value = '');
+            }
+        }
+
+        // Reset all votes
+        async function resetAllVotes() {
+            showModal('resetAllModal');
         }
 
         // Reset individual player vote
         async function resetPlayerVote() {
-            const playerNumber = prompt('Enter the player number to reset their vote:');
+            showModal('resetPlayerModal');
+        }
 
-            if (!playerNumber) {
+        // Reset last round
+        async function resetLastRound() {
+            const config = await getGameConfig();
+            const currentRound = config.currentRound || 1;
+
+            if (currentRound <= 1) {
+                alert('No previous round to reset');
                 return;
             }
 
-            if (!confirm(`Are you sure you want to reset votes for player ${playerNumber}?`)) {
-                return;
-            }
+            document.getElementById('lastRoundNumber').textContent = currentRound - 1;
+            showModal('resetRoundModal');
+        }
 
-            try {
-                // TODO: Implement API call to reset player vote
-                alert(`Reset vote for player ${playerNumber} - functionality to be implemented`);
-            } catch (error) {
-                console.error('Error resetting player vote:', error);
-                alert('Error resetting player vote');
-            }
+        // Restart game
+        async function restartGame() {
+            showModal('restartModal');
         }
 
         // Toggle input field visibility based on switch state
@@ -1418,6 +1572,148 @@
             a.click();
             window.URL.revokeObjectURL(url);
         }
+
+        // Modal Event Handlers
+        // Reset All Votes Modal
+        document.getElementById('cancelResetAllBtn').addEventListener('click', () => {
+            hideModal('resetAllModal');
+        });
+
+        document.getElementById('confirmResetAllBtn').addEventListener('click', async () => {
+            const passcode = document.getElementById('resetAllPasscode').value;
+
+            if (!(await verifyPasscode(passcode))) {
+                alert('Incorrect passcode');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/votes?type=all', {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    hideModal('resetAllModal');
+                    alert(`Successfully deleted ${result.deletedCount} votes`);
+                } else {
+                    alert('Error resetting votes');
+                }
+            } catch (error) {
+                console.error('Error resetting all votes:', error);
+                alert('Error resetting all votes');
+            }
+        });
+
+        // Reset Player Vote Modal
+        document.getElementById('cancelResetPlayerBtn').addEventListener('click', () => {
+            hideModal('resetPlayerModal');
+        });
+
+        document.getElementById('confirmResetPlayerBtn').addEventListener('click', async () => {
+            const playerNumber = document.getElementById('resetPlayerNumber').value;
+            const passcode = document.getElementById('resetPlayerPasscode').value;
+
+            if (!playerNumber) {
+                alert('Please enter a player number');
+                return;
+            }
+
+            if (!(await verifyPasscode(passcode))) {
+                alert('Incorrect passcode');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/votes?type=player&playerNumber=${playerNumber}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    hideModal('resetPlayerModal');
+                    alert(`Successfully deleted ${result.deletedCount} votes for player ${playerNumber}`);
+                } else {
+                    alert('Error resetting player votes');
+                }
+            } catch (error) {
+                console.error('Error resetting player votes:', error);
+                alert('Error resetting player votes');
+            }
+        });
+
+        // Reset Last Round Modal
+        document.getElementById('cancelResetRoundBtn').addEventListener('click', () => {
+            hideModal('resetRoundModal');
+        });
+
+        document.getElementById('confirmResetRoundBtn').addEventListener('click', async () => {
+            const passcode = document.getElementById('resetRoundPasscode').value;
+            const config = await getGameConfig();
+            const lastRound = (config.currentRound || 1) - 1;
+
+            if (!(await verifyPasscode(passcode))) {
+                alert('Incorrect passcode');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/votes?type=round&round=${lastRound}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    hideModal('resetRoundModal');
+                    alert(`Successfully deleted ${result.deletedCount} votes from round ${lastRound}`);
+                } else {
+                    alert('Error resetting round votes');
+                }
+            } catch (error) {
+                console.error('Error resetting round votes:', error);
+                alert('Error resetting round votes');
+            }
+        });
+
+        // Restart Game Modal
+        document.getElementById('cancelRestartBtn').addEventListener('click', () => {
+            hideModal('restartModal');
+        });
+
+        document.getElementById('confirmRestartBtn').addEventListener('click', async () => {
+            const passcode = document.getElementById('restartPasscode').value;
+
+            if (!(await verifyPasscode(passcode))) {
+                alert('Incorrect passcode');
+                return;
+            }
+
+            try {
+                // Reset to round 1
+                await updateGameConfig({ currentRound: 1 });
+
+                // Delete all votes
+                const response = await fetch('/api/votes?type=all', {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    hideModal('restartModal');
+                    document.getElementById('currentRoundDisplay').textContent = '1';
+                    alert('Game restarted successfully');
+                } else {
+                    alert('Error restarting game');
+                }
+            } catch (error) {
+                console.error('Error restarting game:', error);
+                alert('Error restarting game');
+            }
+        });
     </script>
 </body>
 </html>
