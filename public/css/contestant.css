@@ -253,7 +253,8 @@ html, body {
 
 /* Players Grid */
 .players-grid {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     width: 100%;
     flex: 1;
@@ -265,36 +266,28 @@ html, body {
 }
 
 /* Grid layouts for different player counts */
-.grid-2x2 {
-    grid-template-columns: repeat(2, minmax(0, 300px));
+.grid-2x2 .player-card,
+.grid-2x3 .player-card {
+    width: calc(50% - 7.5px);
+    max-width: 300px;
 }
 
-.grid-2x3 {
-    grid-template-columns: repeat(2, minmax(0, 300px));
+.grid-3x3 .player-card,
+.grid-3x4 .player-card {
+    width: calc(33.333% - 10px);
+    max-width: 200px;
 }
 
-.grid-3x3 {
-    grid-template-columns: repeat(3, minmax(0, 200px));
+.grid-4x4 .player-card,
+.grid-4x5 .player-card {
+    width: calc(25% - 11.25px);
+    max-width: 180px;
 }
 
-.grid-3x4 {
-    grid-template-columns: repeat(3, minmax(0, 200px));
-}
-
-.grid-4x4 {
-    grid-template-columns: repeat(4, minmax(0, 180px));
-}
-
-.grid-4x5 {
-    grid-template-columns: repeat(4, minmax(0, 180px));
-}
-
-.grid-5x5 {
-    grid-template-columns: repeat(5, minmax(0, 150px));
-}
-
-.grid-5x6 {
-    grid-template-columns: repeat(5, minmax(0, 150px));
+.grid-5x5 .player-card,
+.grid-5x6 .player-card {
+    width: calc(20% - 12px);
+    max-width: 150px;
 }
 
 /* Dynamic border-radius classes based on player count */
