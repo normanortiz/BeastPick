@@ -2,14 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Beast Pick - Voting</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Icons -->
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-    <link rel="stylesheet" href="/css/global.css?v=7">
-    <link rel="stylesheet" href="/css/contestant.css?v=7">
+    <link rel="apple-touch-icon" href="/images/app-icon.png">
+
+    <!-- iOS Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BeastPick">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000">
+
+    <link rel="stylesheet" href="/css/global.css?v=8">
+    <link rel="stylesheet" href="/css/contestant.css?v=8">
 </head>
 <body>
     <!-- Lock Overlay (shown when voting is locked) -->
@@ -72,7 +86,7 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/data.js"></script>
-    <script src="/js/contestant.js?v=9"></script>
+    <script src="/js/contestant.js?v=10"></script>
     <script>
         // Check authentication (bypassed for development)
         // if (!checkAuthentication('contestant')) {
@@ -92,6 +106,13 @@
             sessionStorage.clear();
             window.location.href = '/players.html';
         });
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('Service Worker registered'))
+                .catch(err => console.log('Service Worker registration failed'));
+        }
     </script>
 </body>
 </html>
