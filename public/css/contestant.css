@@ -516,14 +516,20 @@ html, body {
 
 /* Locked state for player cards */
 .player-card.locked {
-    opacity: 0.3;
+    opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;
 }
 
+.player-card.locked:hover,
+.player-card.locked:active {
+    transform: none;
+    box-shadow: none;
+}
+
 .vote-btn.locked,
 .option-btn.locked {
-    opacity: 0.3;
+    opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;
 }

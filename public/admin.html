@@ -908,6 +908,7 @@
                     <h3>VOTING</h3>
                     <div class="control-card-content">
                         <p><span class="status-indicator inactive" id="votingStatusIndicator"></span><span id="votingStatusText">Voting Locked</span></p>
+                        <div id="adminTimerDisplay" style="display: none; font-size: 36px; font-weight: 800; color: var(--primary-blue); margin-top: 15px;">0:00</div>
                     </div>
                     <div class="control-card-buttons">
                         <button class="btn btn-primary" id="votingToggleBtn" onclick="toggleVotingLock()">START</button>
@@ -1503,6 +1504,53 @@
             }
         }
 
+        // Admin timer countdown
+        let adminTimerInterval;
+        let adminTimeRemaining = 0;
+
+        async function startAdminTimer() {
+            try {
+                const config = await getGameConfig();
+
+                if (!config.votingLocked && config.timerDuration > 0) {
+                    // Calculate time remaining based on start time
+                    if (config.timerStartTime) {
+                        const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
+                        adminTimeRemaining = Math.max(0, config.timerDuration - elapsed);
+                    } else {
+                        adminTimeRemaining = config.timerDuration;
+                    }
+
+                    document.getElementById('adminTimerDisplay').style.display = 'block';
+                    updateAdminTimerDisplay();
+
+                    if (adminTimerInterval) clearInterval(adminTimerInterval);
+
+                    adminTimerInterval = setInterval(() => {
+                        if (adminTimeRemaining > 0) {
+                            adminTimeRemaining--;
+                            updateAdminTimerDisplay();
+                        } else {
+                            clearInterval(adminTimerInterval);
+                            document.getElementById('adminTimerDisplay').style.display = 'none';
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('adminTimerDisplay').style.display = 'none';
+                    if (adminTimerInterval) clearInterval(adminTimerInterval);
+                }
+            } catch (error) {
+                console.error('Error starting admin timer:', error);
+            }
+        }
+
+        function updateAdminTimerDisplay() {
+            const minutes = Math.floor(adminTimeRemaining / 60);
+            const seconds = adminTimeRemaining % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('adminTimerDisplay').textContent = display;
+        }
+
         // Update voting lock UI
         function updateVotingLockUI(isLocked) {
             const indicator = document.getElementById('votingStatusIndicator');
@@ -1515,12 +1563,15 @@
                 indicator.classList.add('inactive');
                 statusText.textContent = 'Voting Locked';
                 toggleBtn.textContent = 'START';
+                document.getElementById('adminTimerDisplay').style.display = 'none';
+                if (adminTimerInterval) clearInterval(adminTimerInterval);
             } else {
                 // Voting is unlocked/on
                 indicator.classList.remove('inactive');
                 indicator.classList.add('active');
                 statusText.textContent = 'Voting On';
                 toggleBtn.textContent = 'LOCK';
+                startAdminTimer();
             }
         }
 
