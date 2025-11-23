@@ -841,7 +841,7 @@
                             <td>001</td>
                             <td>002</td>
                             <td>15 lbs</td>
-                            <td>Jan 22, 2025 - 14:35:22</td>
+                            <td>Jan 22, 2025 - 14:35:22 EST</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1262,19 +1262,22 @@
         // Date formatting helper for voting table
         function formatVotingDate(dateString) {
             // Input: "2025-01-22 14:35:22" or Date object
-            // Output: "Jan 22, 2025 - 14:35:22"
+            // Output: "Jan 22, 2025 - 14:35:22 EST"
             const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
 
+            // Convert to EST timezone
+            const estDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const month = months[date.getMonth()];
-            const day = date.getDate();
-            const year = date.getFullYear();
+            const month = months[estDate.getMonth()];
+            const day = estDate.getDate();
+            const year = estDate.getFullYear();
 
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
+            const hours = String(estDate.getHours()).padStart(2, '0');
+            const minutes = String(estDate.getMinutes()).padStart(2, '0');
+            const seconds = String(estDate.getSeconds()).padStart(2, '0');
 
-            return `${month} ${day}, ${year} - ${hours}:${minutes}:${seconds}`;
+            return `${month} ${day}, ${year} - ${hours}:${minutes}:${seconds} EST`;
         }
 
         // Players management
