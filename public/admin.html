@@ -631,6 +631,37 @@
             background: rgba(0, 188, 231, 0.2);
         }
 
+        /* Mobile Logout */
+        .mobile-logout {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--black);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .mobile-logout button {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-family: var(--font-family);
+            font-size: 16px;
+            font-weight: 400;
+            cursor: pointer;
+            padding: 0;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-logout button:hover {
+            color: var(--primary-blue);
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .admin-logo {
@@ -641,15 +672,24 @@
         @media (max-width: 768px) {
             .admin-container {
                 padding: 15px;
+                padding-bottom: 80px;
             }
 
             .admin-header h1 {
                 font-size: 32px;
             }
 
+            .tabs {
+                gap: 20px;
+            }
+
             .tab {
                 font-size: 16px;
                 padding: 0;
+            }
+
+            .admin-header > div:last-child {
+                display: none;
             }
 
             .settings-grid {
@@ -675,6 +715,10 @@
 
             th, td {
                 padding: 12px;
+            }
+
+            .mobile-logout {
+                display: block;
             }
         }
 
@@ -1900,5 +1944,10 @@
             }
         });
     </script>
+
+    <!-- Mobile Logout Button -->
+    <div class="mobile-logout">
+        <button onclick="logout()">Logout</button>
+    </div>
 </body>
 </html>
