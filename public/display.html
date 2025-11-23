@@ -339,6 +339,28 @@
                 display: none;
             }
         }
+
+        /* Timer Display */
+        .timer-container {
+            width: 100%;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-family: var(--font-family);
+            font-size: 10vh;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-align: center;
+        }
+
+        /* Locked state for player cards */
+        .player-card.locked {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -377,6 +399,11 @@
 
     <!-- Display Screen -->
     <div class="display-screen" id="displayScreen">
+        <!-- Timer Display -->
+        <div class="timer-container" id="timerContainer" style="display: none;">
+            <div class="timer-display" id="timerDisplay">0:00</div>
+        </div>
+
         <div class="players-grid" id="playersGrid">
             <!-- Player cards will be dynamically inserted here -->
         </div>
@@ -550,9 +577,61 @@
             }).join('');
         }
 
+        // Timer functionality
+        let timerInterval;
+        let timeRemaining = 0;
+        let isTimerActive = false;
+
+        async function initTimer() {
+            try {
+                const config = await getGameConfig();
+
+                // Check if timer should be shown
+                if (config.timerVisibility === 'show' && config.timerDuration > 0) {
+                    document.getElementById('timerContainer').style.display = 'block';
+                    timeRemaining = config.timerDuration;
+                    isTimerActive = true;
+                    startTimer();
+                }
+            } catch (error) {
+                console.error('Error initializing timer:', error);
+            }
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                } else {
+                    // Timer reached 0:00
+                    clearInterval(timerInterval);
+                    lockDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+
+        function lockDisplay() {
+            // Lock all player cards
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.classList.add('locked');
+            });
+        }
+
         // Check if already authenticated
         if (sessionStorage.getItem('authenticated') === 'true' && sessionStorage.getItem('role') === 'display') {
             showDisplayScreen();
+            // Initialize timer after display screen is shown
+            initTimer();
         }
     </script>
 </body>

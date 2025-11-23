@@ -499,3 +499,32 @@ html, body {
     }
 }
 
+/* Timer Display */
+.timer-container {
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.timer-display {
+    font-family: var(--font-family);
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+/* Locked state for player cards */
+.player-card.locked {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.vote-btn.locked,
+.option-btn.locked {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+

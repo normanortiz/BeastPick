@@ -60,6 +60,11 @@
 
     <!-- Main Content -->
     <main class="contestant-main">
+        <!-- Timer Display -->
+        <div class="timer-container" id="timerContainer" style="display: none;">
+            <div class="timer-display" id="timerDisplay">0:00</div>
+        </div>
+
         <h1 class="voting-title">CAST YOUR VOTE</h1>
 
         <!-- Vote Value Controls (for Quantity & Player mode) -->
@@ -113,6 +118,69 @@
                 .then(reg => console.log('Service Worker registered'))
                 .catch(err => console.log('Service Worker registration failed'));
         }
+
+        // Timer functionality
+        let timerInterval;
+        let timeRemaining = 0;
+        let isTimerActive = false;
+
+        async function initTimer() {
+            try {
+                const config = await getGameConfig();
+
+                // Check if timer should be shown
+                if (config.timerVisibility === 'show' && config.timerDuration > 0) {
+                    document.getElementById('timerContainer').style.display = 'block';
+                    timeRemaining = config.timerDuration;
+                    isTimerActive = true;
+                    startTimer();
+                }
+            } catch (error) {
+                console.error('Error initializing timer:', error);
+            }
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                } else {
+                    // Timer reached 0:00
+                    clearInterval(timerInterval);
+                    lockVoting();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+
+        function lockVoting() {
+            // Lock all player cards
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.classList.add('locked');
+            });
+
+            // Lock vote buttons
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.classList.add('locked');
+            });
+
+            // Lock option buttons
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.add('locked');
+            });
+        }
+
+        // Initialize timer when page loads
+        initTimer();
     </script>
 </body>
 </html>
