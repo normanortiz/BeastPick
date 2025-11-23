@@ -7,6 +7,7 @@ const defaultConfig = {
     votingMode: 'player', // 'player', 'quantity-player', or 'option-player'
     submissionStyle: 'instant-submit', // 'instant-submit', 'batch-submit', or 'timed-batch'
     timerDuration: 60, // seconds
+    timerVisibility: 'show', // 'show' or 'hide'
     playerName: 'show', // 'show' or 'hide'
     eliminatedPlayers: 'show', // 'show' or 'hide'
     currentRound: 1,
