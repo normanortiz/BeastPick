@@ -764,6 +764,24 @@
             flex: 1;
             min-width: 120px;
         }
+
+        /* Override primary button color to pink for admin page */
+        .btn-primary {
+            background: var(--primary-pink);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(230, 71, 131, 0.5);
+            background: #f05598;
+        }
+
+        .btn-primary:active {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(230, 71, 131, 0.7);
+            background: #d13970;
+        }
     </style>
 </head>
 <body>
