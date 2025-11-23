@@ -662,6 +662,25 @@
             color: var(--primary-blue);
         }
 
+        /* Admin Timer Critical State */
+        #adminTimerDisplay.critical {
+            color: #ff0000 !important;
+            animation: timerPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
+                             0 0 40px rgba(255, 0, 0, 0.6),
+                             0 0 60px rgba(255, 0, 0, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 0, 0, 1),
+                             0 0 60px rgba(255, 0, 0, 0.8),
+                             0 0 90px rgba(255, 0, 0, 0.6);
+            }
+        }
+
         /* Responsive */
         @media (max-width: 900px) {
             .admin-logo {
@@ -1548,7 +1567,15 @@
             const minutes = Math.floor(adminTimeRemaining / 60);
             const seconds = adminTimeRemaining % 60;
             const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('adminTimerDisplay').textContent = display;
+            const timerElement = document.getElementById('adminTimerDisplay');
+            timerElement.textContent = display;
+
+            // Add critical class for last 5 seconds
+            if (adminTimeRemaining <= 5 && adminTimeRemaining > 0) {
+                timerElement.classList.add('critical');
+            } else {
+                timerElement.classList.remove('critical');
+            }
         }
 
         // Update voting lock UI

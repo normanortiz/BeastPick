@@ -172,7 +172,15 @@
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;
             const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timerDisplay').textContent = display;
+            const timerElement = document.getElementById('timerDisplay');
+            timerElement.textContent = display;
+
+            // Add critical class for last 5 seconds
+            if (timeRemaining <= 5 && timeRemaining > 0) {
+                timerElement.classList.add('critical');
+            } else {
+                timerElement.classList.remove('critical');
+            }
         }
 
         function lockVoting() {

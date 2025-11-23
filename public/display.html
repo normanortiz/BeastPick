@@ -354,6 +354,25 @@
             font-weight: 800;
             color: var(--primary-blue);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .timer-display.critical {
+            color: #ff0000;
+            animation: timerPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
+                             0 0 40px rgba(255, 0, 0, 0.6),
+                             0 0 60px rgba(255, 0, 0, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 0, 0, 1),
+                             0 0 60px rgba(255, 0, 0, 0.8),
+                             0 0 90px rgba(255, 0, 0, 0.6);
+            }
         }
 
         /* Locked state for player cards */
@@ -629,7 +648,15 @@
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;
             const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timerDisplay').textContent = display;
+            const timerElement = document.getElementById('timerDisplay');
+            timerElement.textContent = display;
+
+            // Add critical class for last 5 seconds
+            if (timeRemaining <= 5 && timeRemaining > 0) {
+                timerElement.classList.add('critical');
+            } else {
+                timerElement.classList.remove('critical');
+            }
         }
 
         function lockDisplay() {
