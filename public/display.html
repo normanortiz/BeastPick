@@ -684,14 +684,79 @@
             }
         }
 
-        function lockDisplay() {
-            // Show locked overlay
+        async function lockDisplay() {
+            // Calculate and display results instead of showing "VOTING LOCKED"
+            await updateDisplayResults();
+
+            // Show locked overlay with results
             document.getElementById('displayLocked').classList.add('active');
 
             // Lock all player cards
             document.querySelectorAll('.player-card').forEach(card => {
                 card.classList.add('locked');
             });
+        }
+
+        async function updateDisplayResults() {
+            try {
+                const config = await getGameConfig();
+                const votes = await getVotes();
+                const currentRound = config.currentRound || 1;
+
+                // Filter votes for current round
+                const roundVotes = votes.filter(v => v.round == currentRound);
+
+                const displayLocked = document.getElementById('displayLocked');
+                const h1 = displayLocked.querySelector('h1');
+                const p = displayLocked.querySelector('p');
+
+                if (roundVotes.length === 0) {
+                    h1.textContent = 'NO VOTES YET';
+                    p.textContent = 'Waiting for votes...';
+                    return;
+                }
+
+                const votingMode = config.votingMode || 'player';
+
+                if (votingMode === 'player') {
+                    // Player mode: Show total number of votes
+                    const totalVotes = roundVotes.length;
+                    h1.textContent = totalVotes.toString();
+                    p.textContent = totalVotes === 1 ? 'VOTE' : 'VOTES';
+                } else if (votingMode === 'quantity-player') {
+                    // Quantity mode: Show total quantity and unit
+                    const totalQuantity = roundVotes.reduce((sum, vote) => {
+                        return sum + (vote.quantity || vote.value || 0);
+                    }, 0);
+                    const unit = config.unit || '';
+                    h1.textContent = totalQuantity.toString();
+                    p.textContent = unit.toUpperCase();
+                } else if (votingMode === 'option-player') {
+                    // Option mode: Show which option won or "Tie"
+                    const option1Count = roundVotes.filter(v => v.option === 1 || v.option === 'option-1').length;
+                    const option2Count = roundVotes.filter(v => v.option === 2 || v.option === 'option-2').length;
+
+                    if (option1Count === option2Count) {
+                        h1.textContent = 'TIE';
+                        p.textContent = `${option1Count} - ${option2Count}`;
+                    } else if (option1Count > option2Count) {
+                        const option1Label = config.option1Label || 'Option 1';
+                        h1.textContent = option1Label.toUpperCase();
+                        p.textContent = `${option1Count} votes`;
+                    } else {
+                        const option2Label = config.option2Label || 'Option 2';
+                        h1.textContent = option2Label.toUpperCase();
+                        p.textContent = `${option2Count} votes`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating display results:', error);
+                const displayLocked = document.getElementById('displayLocked');
+                const h1 = displayLocked.querySelector('h1');
+                const p = displayLocked.querySelector('p');
+                h1.textContent = 'ERROR';
+                p.textContent = 'Failed to load results';
+            }
         }
 
         function unlockDisplay() {
@@ -718,7 +783,7 @@
 
                 if (previousLockState) {
                     console.log('Locking display (initial)');
-                    lockDisplay();
+                    await lockDisplay();
                 } else {
                     console.log('Unlocking display and initializing timer (initial)');
                     unlockDisplay();
@@ -747,7 +812,7 @@
                     previousLockState = isLocked;
 
                     if (isLocked) {
-                        lockDisplay();
+                        await lockDisplay();
                         if (timerInterval) clearInterval(timerInterval);
                         document.getElementById('timerContainer').style.display = 'none';
                     } else {

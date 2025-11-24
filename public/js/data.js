@@ -100,3 +100,15 @@ async function updateGameConfig(updates) {
         return null;
     }
 }
+
+// Get all votes
+async function getVotes() {
+    try {
+        const response = await fetch('/api/votes');
+        const data = await response.json();
+        return data.success ? data.votes : [];
+    } catch (error) {
+        console.error('Error fetching votes:', error);
+        return [];
+    }
+}
