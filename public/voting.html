@@ -235,15 +235,22 @@
                     initTimer();
                 }
 
-                // Poll for changes every 2 seconds
+                // Poll for changes every 500ms for fast response
                 setInterval(async () => {
                     const updatedConfig = await getGameConfig();
                     const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
 
-                    // If voting just unlocked (went from locked to unlocked), refresh the page
+                    // If voting just unlocked (went from locked to unlocked), restart timer immediately
                     if (previousLockState && !isLocked) {
-                        console.log('Voting unlocked, refreshing page...');
-                        window.location.reload();
+                        console.log('Voting unlocked, restarting timer...');
+                        unlockVoting();
+                        // Stop any existing timer
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+                        // Restart timer with fresh duration
+                        await initTimer();
+                        previousLockState = isLocked;
                         return;
                     }
 
@@ -251,12 +258,10 @@
 
                     if (isLocked) {
                         lockVoting();
-                        initTimer();
                     } else {
                         unlockVoting();
-                        initTimer();
                     }
-                }, 2000);
+                }, 500);
             } catch (error) {
                 console.error('Error watching voting lock state:', error);
             }
