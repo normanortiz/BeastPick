@@ -111,38 +111,42 @@
         // Timer functionality
         let timerInterval;
         let timerEndTime = 0; // Timestamp when timer should end
-        let isTimerActive = false;
+        let isTimerInitialized = false; // Prevent multiple initializations
 
         async function initTimer() {
+            if (isTimerInitialized && timerInterval) {
+                console.log('Timer already initialized, skipping...');
+                return;
+            }
+
             try {
                 const config = await getGameConfig();
 
                 console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked, 'StartTime:', config.timerStartTime);
 
-                // ALWAYS SHOW TIMER - NO CONDITIONS
+                // ALWAYS SHOW TIMER
                 document.getElementById('timerContainer').style.display = 'block';
 
                 // Calculate end time based on when admin started the timer
                 const duration = config.timerDuration || 60;
 
-                // If admin has set a start time, use it to synchronize all clients
-                if (config.timerStartTime && !config.votingLocked) {
+                // ALWAYS use timerStartTime if available - this ensures sync across refreshes
+                if (config.timerStartTime) {
                     timerEndTime = config.timerStartTime + (duration * 1000);
-                    console.log('Timer synced to admin start time:', new Date(config.timerStartTime), 'ending at', new Date(timerEndTime));
+                    console.log('✓ Timer synced to admin start time:', new Date(config.timerStartTime), 'ending at', new Date(timerEndTime));
                 } else {
-                    // Fallback: use current time (shouldn't happen in normal flow)
+                    // No start time yet - just show the duration
                     timerEndTime = Date.now() + (duration * 1000);
-                    console.log('Timer using local time, ending at', new Date(timerEndTime));
+                    console.log('⚠ No timerStartTime - using local fallback');
                 }
 
-                isTimerActive = true;
+                isTimerInitialized = true;
                 startTimer();
             } catch (error) {
                 console.error('Error initializing timer:', error);
-                // FORCE DISPLAY EVEN ON ERROR
                 document.getElementById('timerContainer').style.display = 'block';
                 timerEndTime = Date.now() + (60 * 1000);
-                isTimerActive = true;
+                isTimerInitialized = true;
                 startTimer();
             }
         }

@@ -927,7 +927,7 @@
                     <h3>VOTING</h3>
                     <div class="control-card-content">
                         <p><span class="status-indicator inactive" id="votingStatusIndicator"></span><span id="votingStatusText">Voting Locked</span></p>
-                        <div id="adminTimerDisplay" style="display: none; font-size: 86px; font-weight: 800; color: var(--primary-blue); margin-top: 15px;">0:00</div>
+                        <div id="adminTimerDisplay" style="display: none; font-size: 50px; font-weight: 800; color: var(--primary-blue); margin-top: 15px;">0:00</div>
                     </div>
                     <div class="control-card-buttons">
                         <button class="btn btn-primary" id="votingToggleBtn" onclick="toggleVotingLock()">START</button>
@@ -1524,21 +1524,22 @@
             }
         }
 
-        // Admin timer countdown
+        // Admin timer countdown - TIMESTAMP-BASED
         let adminTimerInterval;
-        let adminTimeRemaining = 0;
+        let adminTimerEndTime = 0; // Timestamp when timer ends
 
         async function startAdminTimer() {
             try {
                 const config = await getGameConfig();
 
                 if (!config.votingLocked && config.timerDuration > 0) {
-                    // Calculate time remaining based on start time
+                    // Calculate end time from admin start time
                     if (config.timerStartTime) {
-                        const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
-                        adminTimeRemaining = Math.max(0, config.timerDuration - elapsed);
+                        adminTimerEndTime = config.timerStartTime + (config.timerDuration * 1000);
+                        console.log('✓ Admin timer synced to start time:', new Date(config.timerStartTime));
                     } else {
-                        adminTimeRemaining = config.timerDuration;
+                        adminTimerEndTime = Date.now() + (config.timerDuration * 1000);
+                        console.log('⚠ Admin timer using fallback');
                     }
 
                     document.getElementById('adminTimerDisplay').style.display = 'block';
@@ -1546,9 +1547,12 @@
 
                     if (adminTimerInterval) clearInterval(adminTimerInterval);
 
+                    // Use 100ms interval for smooth updates (timestamp-based calculation)
                     adminTimerInterval = setInterval(async () => {
-                        if (adminTimeRemaining > 0) {
-                            adminTimeRemaining--;
+                        const now = Date.now();
+                        const timeRemaining = Math.max(0, Math.ceil((adminTimerEndTime - now) / 1000));
+
+                        if (timeRemaining > 0) {
                             updateAdminTimerDisplay();
                         } else {
                             // Timer reached 0 - automatically lock voting
@@ -1565,7 +1569,7 @@
                                 console.error('Error auto-locking voting:', error);
                             }
                         }
-                    }, 1000);
+                    }, 100); // 100ms for smooth display
                 } else {
                     document.getElementById('adminTimerDisplay').style.display = 'none';
                     if (adminTimerInterval) clearInterval(adminTimerInterval);
@@ -1576,14 +1580,17 @@
         }
 
         function updateAdminTimerDisplay() {
-            const minutes = Math.floor(adminTimeRemaining / 60);
-            const seconds = adminTimeRemaining % 60;
+            const now = Date.now();
+            const timeRemaining = Math.max(0, Math.ceil((adminTimerEndTime - now) / 1000));
+
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
             const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             const timerElement = document.getElementById('adminTimerDisplay');
             timerElement.textContent = display;
 
             // Add critical class for last 5 seconds
-            if (adminTimeRemaining <= 5 && adminTimeRemaining > 0) {
+            if (timeRemaining <= 5 && timeRemaining > 0) {
                 timerElement.classList.add('critical');
             } else {
                 timerElement.classList.remove('critical');
