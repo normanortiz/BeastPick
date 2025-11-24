@@ -94,10 +94,10 @@
     <script>
         console.log('=== VOTING.HTML SCRIPT LOADED ===');
 
-        // Check authentication (bypassed for development)
-        // if (!checkAuthentication('contestant')) {
-        //     // Will redirect if not authenticated
-        // }
+        // Check authentication
+        if (!checkAuthentication('contestant')) {
+            // Will redirect if not authenticated
+        }
 
         // Logout button handler
         document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -109,8 +109,7 @@
         });
 
         document.getElementById('confirmLogoutBtn').addEventListener('click', () => {
-            sessionStorage.clear();
-            window.location.href = '/players.html';
+            logout();
         });
 
         // Timer functionality

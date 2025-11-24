@@ -384,16 +384,28 @@
         // Load players on page load
         loadPlayers();
 
-        // Submit handler - TEMPORARY BYPASS FOR DEVELOPMENT
+        // Submit handler
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            // TEMPORARY: Skip authentication and go directly to voting interface
-            const playerNumber = selectedPlayerNumber || '002';
-            sessionStorage.setItem('authenticated', 'true');
-            sessionStorage.setItem('role', 'contestant');
-            sessionStorage.setItem('playerNumber', playerNumber);
+            // For now, bypass passcode and just require player selection
+            const playerNumber = selectedPlayerNumber;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Reset error state
+            playerCombobox.classList.remove('error');
+            errorMessage.classList.remove('show');
+
+            if (!playerNumber) {
+                playerCombobox.classList.add('error');
+                errorMessage.textContent = 'Please select a player';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            // Store authentication with 24-hour expiration
+            setAuthentication('contestant', { playerNumber: playerNumber });
             window.location.href = '/voting.html';
 
-            /* UNCOMMENT THIS WHEN API IS READY:
+            /* FULL PASSCODE AUTHENTICATION - UNCOMMENT WHEN READY:
             const passcode = passcodeInput.value;
             const errorMessage = document.getElementById('errorMessage');
 

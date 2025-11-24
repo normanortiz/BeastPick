@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Beast Pick - Admin</title>
+    <title>Beast Pick - Display Access</title>
+
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
@@ -189,7 +195,7 @@
         </div>
 
         <div class="passcode-form">
-            <h1>ADMIN PANEL</h1>
+            <h1>DISPLAY ACCESS</h1>
             <h2>Enter Passcode</h2>
 
             <div class="input-group">
@@ -206,7 +212,7 @@
             </div>
 
             <button class="btn btn-primary submit-btn" id="submitBtn">
-                LOGIN
+                ACCESS
             </button>
 
             <div class="error-message" id="errorMessage">
@@ -241,16 +247,18 @@
                 return;
             }
 
-            // Validate against hardcoded admin passcode
-            if (validateAdminPasscode(passcode)) {
-                // Store authentication with 24-hour expiration
-                setAuthentication('admin');
+            // Validate against admin-configured passcode
+            const result = await validateDisplayPasscode(passcode);
 
-                // Redirect to admin panel
-                window.location.href = '/admin.html';
+            if (result.success) {
+                // Store authentication with 24-hour expiration
+                setAuthentication('display');
+
+                // Redirect to display page
+                window.location.href = '/display.html';
             } else {
                 passcodeInput.classList.add('error');
-                errorMessage.textContent = 'Invalid passcode';
+                errorMessage.textContent = result.message || 'Invalid passcode';
                 errorMessage.classList.add('show');
             }
         });
