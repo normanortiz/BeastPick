@@ -500,11 +500,15 @@ html, body {
 
 /* Timer Display */
 .timer-container {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
     width: 100%;
     padding: 20px 0;
     text-align: center;
-    position: relative;
-    z-index: 10000;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.8);
 }
 
 .timer-display {
