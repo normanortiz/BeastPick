@@ -5,7 +5,7 @@ const defaultConfig = {
     voteIncrement: 1,
     unit: '',
     votingMode: 'player', // 'player', 'quantity-player', or 'option-player'
-    submissionStyle: 'instant-submit', // 'instant-submit', 'batch-submit', or 'timed-batch'
+    submissionType: 'instant-submit', // 'instant-submit', 'batch-submit', or 'timed-batch'
     timerDuration: 60, // seconds
     timerVisibility: 'show', // 'show' or 'hide'
     playerName: 'show', // 'show' or 'hide'
@@ -14,7 +14,9 @@ const defaultConfig = {
     option1Label: 'Yes',
     option2Label: 'No',
     securityPasscode: '',
-    customLogo: null // Base64 encoded PNG logo
+    customLogo: null, // Base64 encoded PNG logo
+    votingLocked: true, // Whether voting is currently locked
+    timerStartTime: null // Timestamp when timer was started
 };
 
 // In-memory storage for development (fallback when KV is not configured)
