@@ -503,6 +503,8 @@ html, body {
     width: 100%;
     padding: 20px 0;
     text-align: center;
+    position: relative;
+    z-index: 10000;
 }
 
 .timer-display {
