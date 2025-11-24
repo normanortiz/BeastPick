@@ -249,6 +249,7 @@
                 if (previousLockState) {
                     console.log('Locking voting (initial)');
                     lockVoting();
+                    initTimer();
                 } else {
                     console.log('Unlocking voting and initializing timer (initial)');
                     unlockVoting();
@@ -271,9 +272,7 @@
 
                     if (isLocked) {
                         lockVoting();
-                        if (timerInterval) {
-                            clearInterval(timerInterval);
-                        }
+                        initTimer();
                     } else {
                         unlockVoting();
                         initTimer();
