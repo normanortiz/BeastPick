@@ -1,5 +1,5 @@
 // Service Worker for Beast Pick PWA
-const CACHE_NAME = 'beastpick-v1';
+const CACHE_NAME = 'beastpick-v2';
 const urlsToCache = [
   '/voting.html',
   '/css/global.css',
