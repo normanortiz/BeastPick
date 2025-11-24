@@ -132,30 +132,27 @@
 
                 console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked);
 
-                // Check if timer should be shown (always show when set to 'show', regardless of lock state)
-                if (config.timerVisibility === 'show' && config.timerDuration > 0) {
-                    document.getElementById('timerContainer').style.display = 'block';
+                // ALWAYS SHOW TIMER - NO CONDITIONS
+                document.getElementById('timerContainer').style.display = 'block';
 
-                    // Calculate time remaining based on start time
-                    if (config.timerStartTime) {
-                        const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
-                        timeRemaining = Math.max(0, config.timerDuration - elapsed);
-                    } else {
-                        timeRemaining = config.timerDuration;
-                    }
-
-                    isTimerActive = true;
-                    startTimer();
-                    console.log('Timer started with', timeRemaining, 'seconds');
+                // Calculate time remaining based on start time
+                if (config.timerStartTime && config.timerDuration) {
+                    const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
+                    timeRemaining = Math.max(0, config.timerDuration - elapsed);
                 } else {
-                    document.getElementById('timerContainer').style.display = 'none';
-                    if (timerInterval) {
-                        clearInterval(timerInterval);
-                    }
-                    console.log('Timer hidden - conditions not met');
+                    timeRemaining = config.timerDuration || 60; // Default to 60 seconds if not set
                 }
+
+                isTimerActive = true;
+                startTimer();
+                console.log('Timer FORCED to display with', timeRemaining, 'seconds');
             } catch (error) {
                 console.error('Error initializing timer:', error);
+                // FORCE DISPLAY EVEN ON ERROR
+                document.getElementById('timerContainer').style.display = 'block';
+                timeRemaining = 60;
+                isTimerActive = true;
+                startTimer();
             }
         }
 
