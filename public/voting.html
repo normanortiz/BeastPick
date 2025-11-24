@@ -194,8 +194,8 @@
         }
 
         function lockVoting() {
-            // Show lock overlay
-            document.getElementById('lockOverlay').style.display = 'flex';
+            // DON'T show lock overlay - just lock the cards
+            // document.getElementById('lockOverlay').style.display = 'flex';
 
             // Lock all player cards
             document.querySelectorAll('.player-card').forEach(card => {
