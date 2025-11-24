@@ -230,14 +230,16 @@
         }
 
         // Listen for voting lock state changes
+        let previousLockState = true; // Track previous lock state globally
+
         async function watchVotingLockState() {
             try {
                 console.log('watchVotingLockState called');
                 // Initial check
                 const config = await getGameConfig();
                 console.log('Got config:', config);
-                let previousLockState = config.votingLocked !== undefined ? config.votingLocked : true;
-                console.log('Previous lock state:', previousLockState);
+                previousLockState = config.votingLocked !== undefined ? config.votingLocked : true;
+                console.log('Initial lock state:', previousLockState);
 
                 if (previousLockState) {
                     console.log('Locking voting (initial)');
@@ -248,15 +250,22 @@
                     unlockVoting();
                     initTimer();
                 }
+            } catch (error) {
+                console.error('Error in initial check:', error);
+            }
 
-                // Poll for changes every 500ms for fast response
-                setInterval(async () => {
+            // Poll for changes every 500ms - always run this
+            console.log('Starting polling interval...');
+            setInterval(async () => {
+                try {
                     const updatedConfig = await getGameConfig();
                     const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
 
+                    console.log('Poll check - Previous:', previousLockState, 'Current:', isLocked);
+
                     // If voting just unlocked (went from locked to unlocked), refresh page immediately
-                    if (previousLockState && !isLocked) {
-                        console.log('Voting unlocked, refreshing page to start timer...');
+                    if (previousLockState === true && isLocked === false) {
+                        console.log('🔥 VOTING UNLOCKED! Refreshing page now...');
                         window.location.reload();
                         return;
                     }
@@ -268,10 +277,10 @@
                     } else {
                         unlockVoting();
                     }
-                }, 500);
-            } catch (error) {
-                console.error('Error watching voting lock state:', error);
-            }
+                } catch (error) {
+                    console.error('Error in polling interval:', error);
+                }
+            }, 500);
         }
 
         // Initialize voting lock state watcher when page loads
