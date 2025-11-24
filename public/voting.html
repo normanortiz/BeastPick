@@ -122,13 +122,8 @@
                 // ALWAYS SHOW TIMER - NO CONDITIONS
                 document.getElementById('timerContainer').style.display = 'block';
 
-                // Calculate time remaining based on start time
-                if (config.timerStartTime && config.timerDuration) {
-                    const elapsed = Math.floor((Date.now() - config.timerStartTime) / 1000);
-                    timeRemaining = Math.max(0, config.timerDuration - elapsed);
-                } else {
-                    timeRemaining = config.timerDuration || 60; // Default to 60 seconds if not set
-                }
+                // Use configured duration directly
+                timeRemaining = config.timerDuration || 60;
 
                 isTimerActive = true;
                 startTimer();
