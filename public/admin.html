@@ -814,12 +814,13 @@
 
         .modal-buttons {
             display: flex;
+            flex-direction: column;
             gap: 15px;
             justify-content: center;
         }
 
         .modal-buttons .btn {
-            flex: 1;
+            width: 100%;
             min-width: 120px;
         }
 
@@ -894,8 +895,8 @@
             <p style="margin-top: 20px; font-size: 14px; color: var(--gray);">Enter admin passcode to confirm:</p>
             <input type="password" id="restartPasscode" class="passcode-input" maxlength="6" placeholder="000000" style="width: 100%; margin-top: 10px; padding: 15px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; font-size: 20px; text-align: center; font-family: var(--font-family); font-weight: 700;">
             <div class="modal-buttons" style="margin-top: 30px;">
-                <button class="btn btn-secondary" id="cancelRestartBtn">CANCEL</button>
                 <button class="btn btn-primary" id="confirmRestartBtn">RESTART</button>
+                <button class="btn btn-secondary" id="cancelRestartBtn">CANCEL</button>
             </div>
         </div>
     </div>
