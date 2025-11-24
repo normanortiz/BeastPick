@@ -901,6 +901,17 @@
         </div>
     </div>
 
+    <!-- Generic Alert Modal -->
+    <div class="reset-modal" id="alertModal" style="display: none;">
+        <div class="modal-content">
+            <h2 id="alertTitle">NOTIFICATION</h2>
+            <p id="alertMessage"></p>
+            <div class="modal-buttons" style="margin-top: 30px;" id="alertButtons">
+                <button class="btn btn-primary" id="alertOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-container">
         <div class="admin-header">
             <div class="tabs">
@@ -1195,6 +1206,55 @@
     <script src="/js/auth.js"></script>
     <script src="/js/data.js"></script>
     <script>
+        // Styled Alert/Confirm Functions
+        function showAlert(message, title = 'NOTIFICATION') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('alertModal');
+                const titleEl = document.getElementById('alertTitle');
+                const messageEl = document.getElementById('alertMessage');
+                const buttonsEl = document.getElementById('alertButtons');
+                const okBtn = document.getElementById('alertOkBtn');
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                buttonsEl.innerHTML = '<button class="btn btn-primary" id="alertOkBtn">OK</button>';
+                modal.style.display = 'flex';
+
+                const newOkBtn = document.getElementById('alertOkBtn');
+                newOkBtn.onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(true);
+                };
+            });
+        }
+
+        function showConfirm(message, title = 'CONFIRM') {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('alertModal');
+                const titleEl = document.getElementById('alertTitle');
+                const messageEl = document.getElementById('alertMessage');
+                const buttonsEl = document.getElementById('alertButtons');
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                buttonsEl.innerHTML = `
+                    <button class="btn btn-primary" id="alertConfirmBtn">CONFIRM</button>
+                    <button class="btn btn-secondary" id="alertCancelBtn">CANCEL</button>
+                `;
+                modal.style.display = 'flex';
+
+                document.getElementById('alertConfirmBtn').onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(true);
+                };
+
+                document.getElementById('alertCancelBtn').onclick = () => {
+                    modal.style.display = 'none';
+                    resolve(false);
+                };
+            });
+        }
+
         // Check authentication
         if (!checkAuthentication('admin')) {
             // Will redirect if not authenticated
@@ -1521,7 +1581,7 @@
                 console.log(`Voting ${newLockedState ? 'locked' : 'unlocked'}`);
             } catch (error) {
                 console.error('Error toggling voting lock:', error);
-                alert('Error toggling voting lock');
+                await showAlert('Error toggling voting lock', 'ERROR');
             }
         }
 
@@ -1624,7 +1684,7 @@
 
         // Start new round
         async function startNewRound() {
-            if (!confirm('Are you sure you want to start a new round? This will refresh all voting pages.')) {
+            if (!await showConfirm('Are you sure you want to start a new round? This will refresh all voting pages.', 'START NEW ROUND')) {
                 return;
             }
 
@@ -1637,10 +1697,10 @@
                 // Update the display
                 document.getElementById('currentRoundDisplay').textContent = newRound;
 
-                alert(`New round ${newRound} started! All voting pages will refresh.`);
+                await showAlert(`New round ${newRound} started! All voting pages will refresh.`, 'SUCCESS');
             } catch (error) {
                 console.error('Error starting new round:', error);
-                alert('Error starting new round');
+                await showAlert('Error starting new round', 'ERROR');
             }
         }
 
@@ -1692,7 +1752,7 @@
             const currentRound = config.currentRound || 1;
 
             if (currentRound <= 1) {
-                alert('No previous round to reset');
+                await showAlert('No previous round to reset', 'ERROR');
                 return;
             }
 
@@ -1747,7 +1807,7 @@
 
             // Validate file type
             if (!file.type.match('image/png')) {
-                alert('Only PNG files are allowed');
+                await showAlert('Only PNG files are allowed', 'ERROR');
                 event.target.value = '';
                 return;
             }
@@ -1762,10 +1822,10 @@
 
                 try {
                     await updateGameConfig({ customLogo: logoDataUrl });
-                    alert('Logo uploaded successfully!');
+                    await showAlert('Logo uploaded successfully!', 'SUCCESS');
                 } catch (error) {
                     console.error('Error saving logo:', error);
-                    alert('Error saving logo');
+                    await showAlert('Error saving logo', 'ERROR');
                 }
             };
             reader.readAsDataURL(file);
@@ -1849,11 +1909,11 @@
                 if (result.success) {
                     await loadPlayersTable();
                 } else {
-                    alert('Error deleting player');
+                    await showAlert('Error deleting player', 'ERROR');
                 }
             } catch (error) {
                 console.error('Error deleting player:', error);
-                alert('Error deleting player');
+                await showAlert('Error deleting player', 'ERROR');
             }
         }
 
@@ -1957,7 +2017,7 @@
             const passcode = document.getElementById('resetAllPasscode').value;
 
             if (!(await verifyPasscode(passcode))) {
-                alert('Incorrect passcode');
+                await showAlert('Incorrect passcode', 'ERROR');
                 return;
             }
 
@@ -1970,13 +2030,13 @@
 
                 if (result.success) {
                     hideModal('resetAllModal');
-                    alert(`Successfully deleted ${result.deletedCount} votes`);
+                    await showAlert(`Successfully deleted ${result.deletedCount} votes`, 'SUCCESS');
                 } else {
-                    alert('Error resetting votes');
+                    await showAlert('Error resetting votes', 'ERROR');
                 }
             } catch (error) {
                 console.error('Error resetting all votes:', error);
-                alert('Error resetting all votes');
+                await showAlert('Error resetting all votes', 'ERROR');
             }
         });
 
@@ -1990,12 +2050,12 @@
             const passcode = document.getElementById('resetPlayerPasscode').value;
 
             if (!playerNumber) {
-                alert('Please enter a player number');
+                await showAlert('Please enter a player number', 'ERROR');
                 return;
             }
 
             if (!(await verifyPasscode(passcode))) {
-                alert('Incorrect passcode');
+                await showAlert('Incorrect passcode', 'ERROR');
                 return;
             }
 
@@ -2008,13 +2068,13 @@
 
                 if (result.success) {
                     hideModal('resetPlayerModal');
-                    alert(`Successfully deleted ${result.deletedCount} votes for player ${playerNumber}`);
+                    await showAlert(`Successfully deleted ${result.deletedCount} votes for player ${playerNumber}`, 'SUCCESS');
                 } else {
-                    alert('Error resetting player votes');
+                    await showAlert('Error resetting player votes', 'ERROR');
                 }
             } catch (error) {
                 console.error('Error resetting player votes:', error);
-                alert('Error resetting player votes');
+                await showAlert('Error resetting player votes', 'ERROR');
             }
         });
 
@@ -2029,7 +2089,7 @@
             const lastRound = (config.currentRound || 1) - 1;
 
             if (!(await verifyPasscode(passcode))) {
-                alert('Incorrect passcode');
+                await showAlert('Incorrect passcode', 'ERROR');
                 return;
             }
 
@@ -2042,13 +2102,13 @@
 
                 if (result.success) {
                     hideModal('resetRoundModal');
-                    alert(`Successfully deleted ${result.deletedCount} votes from round ${lastRound}`);
+                    await showAlert(`Successfully deleted ${result.deletedCount} votes from round ${lastRound}`, 'SUCCESS');
                 } else {
-                    alert('Error resetting round votes');
+                    await showAlert('Error resetting round votes', 'ERROR');
                 }
             } catch (error) {
                 console.error('Error resetting round votes:', error);
-                alert('Error resetting round votes');
+                await showAlert('Error resetting round votes', 'ERROR');
             }
         });
 
@@ -2061,7 +2121,7 @@
             const passcode = document.getElementById('restartPasscode').value;
 
             if (!(await verifyPasscode(passcode))) {
-                alert('Incorrect passcode');
+                await showAlert('Incorrect passcode', 'ERROR');
                 return;
             }
 
@@ -2079,13 +2139,13 @@
                 if (result.success) {
                     hideModal('restartModal');
                     document.getElementById('currentRoundDisplay').textContent = '1';
-                    alert('Game restarted successfully');
+                    await showAlert('Game restarted successfully', 'SUCCESS');
                 } else {
-                    alert('Error restarting game');
+                    await showAlert('Error restarting game', 'ERROR');
                 }
             } catch (error) {
                 console.error('Error restarting game:', error);
-                alert('Error restarting game');
+                await showAlert('Error restarting game', 'ERROR');
             }
         });
     </script>
