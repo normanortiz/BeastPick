@@ -241,8 +241,10 @@
                 return;
             }
 
-            // Validate against hardcoded admin passcode
-            if (validateAdminPasscode(passcode)) {
+            // Validate against backend API (secure - passcode never exposed to client)
+            const isValid = await validateAdminPasscode(passcode);
+
+            if (isValid) {
                 // Store authentication with 24-hour expiration
                 setAuthentication('admin');
 

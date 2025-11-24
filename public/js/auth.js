@@ -2,7 +2,6 @@
 
 // Constants
 const AUTH_EXPIRY_HOURS = 24;
-const ADMIN_PASSCODE = '000000'; // Hardcoded admin passcode
 
 // Set authentication with 24-hour expiration
 function setAuthentication(role, additionalData = {}) {
@@ -51,28 +50,42 @@ function getAuthData() {
     }
 }
 
-// Validate admin passcode (hardcoded)
-function validateAdminPasscode(passcode) {
-    return passcode === ADMIN_PASSCODE;
+// Validate admin passcode via backend API (secure)
+async function validateAdminPasscode(passcode) {
+    try {
+        const response = await fetch('/api/auth/admin-login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ passcode })
+        });
+
+        const data = await response.json();
+        return data.success === true;
+    } catch (error) {
+        console.error('Admin passcode validation error:', error);
+        return false;
+    }
 }
 
-// Validate display/voting passcode (from config)
+// Validate display/voting passcode via backend API (secure)
 async function validateDisplayPasscode(passcode) {
     try {
-        // Fetch game config to get the security passcode
-        const response = await fetch('/api/config');
+        const response = await fetch('/api/auth/validate-passcode', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                passcode,
+                role: 'display'
+            })
+        });
+
         const data = await response.json();
 
-        if (!data.success || !data.config) {
-            return {
-                success: false,
-                message: 'Could not load configuration'
-            };
-        }
-
-        const configPasscode = data.config.securityPasscode || '123456';
-
-        if (passcode === configPasscode) {
+        if (data.success) {
             return {
                 success: true,
                 message: 'Authentication successful'
@@ -80,7 +93,7 @@ async function validateDisplayPasscode(passcode) {
         } else {
             return {
                 success: false,
-                message: 'Invalid passcode'
+                message: data.message || 'Invalid passcode'
             };
         }
     } catch (error) {

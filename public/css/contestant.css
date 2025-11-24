@@ -260,7 +260,7 @@ html, body {
     flex: 1;
     overflow: hidden;
     align-content: center;
-    padding: 15px;
+    padding: 0 15px 15px 15px; /* Remove top padding */
     max-height: 100%;
     justify-content: center;
 }

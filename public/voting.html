@@ -128,8 +128,14 @@
 
                 console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked, 'StartTime:', config.timerStartTime);
 
-                // ALWAYS SHOW TIMER
-                document.getElementById('timerContainer').style.display = 'block';
+                // Show timer only if timerVisibility is 'show'
+                const timerContainer = document.getElementById('timerContainer');
+                if (config.timerVisibility === 'show') {
+                    timerContainer.style.display = 'block';
+                } else {
+                    timerContainer.style.display = 'none';
+                    return; // Don't initialize timer if it's hidden
+                }
 
                 // Calculate end time based on when admin started the timer
                 const duration = config.timerDuration || 60;
@@ -160,12 +166,13 @@
 
             timerInterval = setInterval(async () => {
                 const now = Date.now();
-                const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+                const timeRemaining = (timerEndTime - now) / 1000;
 
                 if (timeRemaining > 0) {
                     updateTimerDisplay();
                 } else {
-                    // Timer reached 0:00
+                    // Timer reached 0:00 - lock immediately
+                    updateTimerDisplay(); // Show 0:00 one last time
                     clearInterval(timerInterval);
                     lockVoting();
 
@@ -181,7 +188,7 @@
 
         function updateTimerDisplay() {
             const now = Date.now();
-            const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+            const timeRemaining = Math.max(0, Math.floor((timerEndTime - now) / 1000));
 
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;

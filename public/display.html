@@ -760,11 +760,8 @@
                 }
             } catch (error) {
                 console.error('Error updating display results:', error);
-                const displayLocked = document.getElementById('displayLocked');
-                const h1 = displayLocked.querySelector('h1');
-                const p = displayLocked.querySelector('p');
-                h1.textContent = 'ERROR';
-                p.textContent = 'Failed to load results';
+                // Don't show error to users - just log it
+                // If there's truly no data, we'll just show nothing
             }
         }
 

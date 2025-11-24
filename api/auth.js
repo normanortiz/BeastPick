@@ -80,27 +80,35 @@ export default async function handler(req, res) {
             });
         }
 
-        // Admin login
+        // Admin login with passcode
         if (path.includes('/admin-login')) {
             if (req.method !== 'POST') {
                 return res.status(405).json({ error: 'Method not allowed' });
             }
 
-            const { password } = req.body;
+            const { passcode } = req.body;
 
-            if (!password) {
+            // Admin passcode is hardcoded on server - secure from client inspection
+            const ADMIN_PASSCODE = '000000';
+
+            if (!passcode) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Password required'
+                    message: 'Passcode required'
                 });
             }
 
-            const storedPassword = await getAdminPassword();
+            if (passcode.length !== 6) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Passcode must be 6 digits'
+                });
+            }
 
-            if (password !== storedPassword) {
+            if (passcode !== ADMIN_PASSCODE) {
                 return res.status(401).json({
                     success: false,
-                    message: 'Invalid password'
+                    message: 'Invalid passcode'
                 });
             }
 
