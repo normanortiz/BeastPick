@@ -117,18 +117,26 @@
             try {
                 const config = await getGameConfig();
 
-                console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked);
+                console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked, 'StartTime:', config.timerStartTime);
 
                 // ALWAYS SHOW TIMER - NO CONDITIONS
                 document.getElementById('timerContainer').style.display = 'block';
 
-                // Calculate end time based on duration
+                // Calculate end time based on when admin started the timer
                 const duration = config.timerDuration || 60;
-                timerEndTime = Date.now() + (duration * 1000);
+
+                // If admin has set a start time, use it to synchronize all clients
+                if (config.timerStartTime && !config.votingLocked) {
+                    timerEndTime = config.timerStartTime + (duration * 1000);
+                    console.log('Timer synced to admin start time:', new Date(config.timerStartTime), 'ending at', new Date(timerEndTime));
+                } else {
+                    // Fallback: use current time (shouldn't happen in normal flow)
+                    timerEndTime = Date.now() + (duration * 1000);
+                    console.log('Timer using local time, ending at', new Date(timerEndTime));
+                }
 
                 isTimerActive = true;
                 startTimer();
-                console.log('Timer FORCED to display with', duration, 'seconds, ending at', new Date(timerEndTime));
             } catch (error) {
                 console.error('Error initializing timer:', error);
                 // FORCE DISPLAY EVEN ON ERROR
