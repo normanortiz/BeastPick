@@ -254,17 +254,10 @@
                     const updatedConfig = await getGameConfig();
                     const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
 
-                    // If voting just unlocked (went from locked to unlocked), restart timer immediately
+                    // If voting just unlocked (went from locked to unlocked), refresh page immediately
                     if (previousLockState && !isLocked) {
-                        console.log('Voting unlocked, restarting timer...');
-                        unlockVoting();
-                        // Stop any existing timer
-                        if (timerInterval) {
-                            clearInterval(timerInterval);
-                        }
-                        // Restart timer with fresh duration
-                        await initTimer();
-                        previousLockState = isLocked;
+                        console.log('Voting unlocked, refreshing page to start timer...');
+                        window.location.reload();
                         return;
                     }
 
