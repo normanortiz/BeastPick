@@ -132,8 +132,8 @@
 
                 console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked);
 
-                // Check if timer should be shown and voting is unlocked
-                if (config.timerVisibility === 'show' && config.timerDuration > 0 && !config.votingLocked) {
+                // Check if timer should be shown (always show when set to 'show', regardless of lock state)
+                if (config.timerVisibility === 'show' && config.timerDuration > 0) {
                     document.getElementById('timerContainer').style.display = 'block';
 
                     // Calculate time remaining based on start time
