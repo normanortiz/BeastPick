@@ -1067,9 +1067,9 @@
                                 </svg>
                             </div>
                             <div class="combobox-options">
-                                <div class="combobox-option selected" onclick="selectOption(this, 'instant')">Instant (Single Vote)</div>
+                                <div class="combobox-option selected" onclick="selectOption(this, 'instant-submit')">Instant (Single Vote)</div>
                                 <div class="combobox-option" onclick="selectOption(this, 'timed-batch')">Time Based (Single Vote)</div>
-                                <div class="combobox-option" onclick="selectOption(this, 'batch')">Time Based (Multi Vote)</div>
+                                <div class="combobox-option" onclick="selectOption(this, 'batch-submit')">Time Based (Multi Vote)</div>
                             </div>
                         </div>
                     </div>
@@ -1360,11 +1360,19 @@
                 if (config.votingMode) {
                     const votingModeText = config.votingMode.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(/ And /g, ' & ');
                     document.getElementById('selectedVotingMode').textContent = votingModeText;
+                    document.getElementById('selectedVotingMode').setAttribute('data-value', config.votingMode);
                 }
 
                 if (config.submissionType) {
-                    const submissionTypeText = config.submissionType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    // Map config values to display text
+                    const submissionTypeMap = {
+                        'instant-submit': 'Instant (Single Vote)',
+                        'timed-batch': 'Time Based (Single Vote)',
+                        'batch-submit': 'Time Based (Multi Vote)'
+                    };
+                    const submissionTypeText = submissionTypeMap[config.submissionType] || 'Instant (Single Vote)';
                     document.getElementById('selectedSubmissionType').textContent = submissionTypeText;
+                    document.getElementById('selectedSubmissionType').setAttribute('data-value', config.submissionType);
                 }
 
                 if (config.playerName) {
@@ -1499,6 +1507,8 @@
             allOptions.forEach(opt => opt.classList.remove('selected'));
             optionElement.classList.add('selected');
             selectedText.textContent = optionElement.textContent;
+            // Store the actual value in a data attribute
+            selectedText.setAttribute('data-value', value);
 
             combobox.classList.remove('open');
             optionElement.parentElement.classList.remove('open');
@@ -1511,7 +1521,7 @@
 
         // Update voting mode visibility
         function updateVotingModeVisibility() {
-            const votingMode = document.querySelector('#selectedVotingMode')?.textContent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') || 'player';
+            const votingMode = document.querySelector('#selectedVotingMode')?.getAttribute('data-value') || 'player';
             const voteIncrementGroup = document.getElementById('voteIncrementGroup');
             const unitGroup = document.getElementById('unitGroup');
             const option1Group = document.getElementById('option1Group');
@@ -1539,10 +1549,10 @@
         // Auto-save settings
         async function autoSaveSettings() {
             try {
-                // Collect all settings
+                // Collect all settings using data-value attributes for proper value mapping
                 const settings = {
-                    votingMode: document.querySelector('#selectedVotingMode')?.textContent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') || 'player',
-                    submissionType: document.querySelector('#selectedSubmissionType')?.textContent.toLowerCase().replace(/ /g, '-') || 'instant-submit',
+                    votingMode: document.querySelector('#selectedVotingMode')?.getAttribute('data-value') || 'player',
+                    submissionType: document.querySelector('#selectedSubmissionType')?.getAttribute('data-value') || 'instant-submit',
                     playerName: document.querySelector('#selectedPlayerName')?.textContent.toLowerCase() || 'show',
                     eliminatedPlayers: document.querySelector('#selectedEliminatedPlayers')?.textContent.toLowerCase() || 'show',
                     timerVisibility: document.querySelector('#selectedTimerVisibility')?.textContent.toLowerCase() || 'show',

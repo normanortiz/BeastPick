@@ -13,7 +13,7 @@ const defaultConfig = {
     currentRound: 1,
     option1Label: 'Yes',
     option2Label: 'No',
-    securityPasscode: '',
+    securityPasscode: '123456',
     customLogo: null, // Base64 encoded PNG logo
     votingLocked: true, // Whether voting is currently locked
     timerStartTime: null // Timestamp when timer was started
