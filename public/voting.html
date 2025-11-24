@@ -110,7 +110,7 @@
 
         // Timer functionality
         let timerInterval;
-        let timeRemaining = 0;
+        let timerEndTime = 0; // Timestamp when timer should end
         let isTimerActive = false;
 
         async function initTimer() {
@@ -122,17 +122,18 @@
                 // ALWAYS SHOW TIMER - NO CONDITIONS
                 document.getElementById('timerContainer').style.display = 'block';
 
-                // Use configured duration directly
-                timeRemaining = config.timerDuration || 60;
+                // Calculate end time based on duration
+                const duration = config.timerDuration || 60;
+                timerEndTime = Date.now() + (duration * 1000);
 
                 isTimerActive = true;
                 startTimer();
-                console.log('Timer FORCED to display with', timeRemaining, 'seconds');
+                console.log('Timer FORCED to display with', duration, 'seconds, ending at', new Date(timerEndTime));
             } catch (error) {
                 console.error('Error initializing timer:', error);
                 // FORCE DISPLAY EVEN ON ERROR
                 document.getElementById('timerContainer').style.display = 'block';
-                timeRemaining = 60;
+                timerEndTime = Date.now() + (60 * 1000);
                 isTimerActive = true;
                 startTimer();
             }
@@ -142,8 +143,10 @@
             updateTimerDisplay();
 
             timerInterval = setInterval(async () => {
+                const now = Date.now();
+                const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+
                 if (timeRemaining > 0) {
-                    timeRemaining--;
                     updateTimerDisplay();
                 } else {
                     // Timer reached 0:00
@@ -157,10 +160,13 @@
                         console.error('Error updating voting lock:', error);
                     }
                 }
-            }, 1000);
+            }, 100); // Check every 100ms for smooth countdown
         }
 
         function updateTimerDisplay() {
+            const now = Date.now();
+            const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
+
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;
             const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
