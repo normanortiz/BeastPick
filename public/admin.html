@@ -1586,7 +1586,8 @@
                 // Update Firebase
                 await updateGameConfig({
                     votingLocked: newLockedState,
-                    timerStartTime: newLockedState ? null : getSyncedTime()
+                    timerStartTime: newLockedState ? null : getSyncedTime(),
+                    timerVisibility: newLockedState ? 'hide' : 'show'
                 });
 
                 // Update UI
