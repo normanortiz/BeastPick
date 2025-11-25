@@ -1205,6 +1205,7 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/data.js"></script>
+    <script src="/js/time-sync.js"></script>
     <script>
         // Styled Alert/Confirm Functions
         function showAlert(message, title = 'NOTIFICATION') {
@@ -1431,7 +1432,10 @@
         }
 
         // Load players on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Sync time with server FIRST for accurate timer
+            await syncTime();
+
             loadPlayersTable();
             loadSavedSettings();
 
@@ -1582,7 +1586,7 @@
                 // Update Firebase
                 await updateGameConfig({
                     votingLocked: newLockedState,
-                    timerStartTime: newLockedState ? null : Date.now()
+                    timerStartTime: newLockedState ? null : getSyncedTime()
                 });
 
                 // Update UI
@@ -1609,7 +1613,7 @@
                         adminTimerEndTime = config.timerStartTime + (config.timerDuration * 1000);
                         console.log('✓ Admin timer synced to start time:', new Date(config.timerStartTime));
                     } else {
-                        adminTimerEndTime = Date.now() + (config.timerDuration * 1000);
+                        adminTimerEndTime = getSyncedTime() + (config.timerDuration * 1000);
                         console.log('⚠ Admin timer using fallback');
                     }
 
@@ -1620,7 +1624,7 @@
 
                     // Use 100ms interval for smooth updates (timestamp-based calculation)
                     adminTimerInterval = setInterval(async () => {
-                        const now = Date.now();
+                        const now = getSyncedTime();
                         const timeRemaining = Math.max(0, Math.ceil((adminTimerEndTime - now) / 1000));
 
                         if (timeRemaining > 0) {
@@ -1651,7 +1655,7 @@
         }
 
         function updateAdminTimerDisplay() {
-            const now = Date.now();
+            const now = getSyncedTime();
             const timeRemaining = Math.max(0, Math.ceil((adminTimerEndTime - now) / 1000));
 
             const minutes = Math.floor(timeRemaining / 60);

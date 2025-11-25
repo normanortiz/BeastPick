@@ -449,6 +449,7 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/data.js"></script>
+    <script src="/js/time-sync.js"></script>
     <script>
         // Check authentication
         checkAuthentication('display');
@@ -477,9 +478,12 @@
         });
 
         // Show display screen
-        function showDisplayScreen() {
+        async function showDisplayScreen() {
             document.getElementById('passcodeContainer').style.display = 'none';
             document.getElementById('displayScreen').classList.add('active');
+
+            // Sync time with server FIRST for accurate timer
+            await syncTime();
 
             // Load data initially
             loadDisplayData();
@@ -636,7 +640,7 @@
                         timerEndTime = config.timerStartTime + (config.timerDuration * 1000);
                         console.log('✓ Display timer synced to start time:', new Date(config.timerStartTime));
                     } else {
-                        timerEndTime = Date.now() + (config.timerDuration * 1000);
+                        timerEndTime = getSyncedTime() + (config.timerDuration * 1000);
                         console.log('⚠ Display timer using fallback');
                     }
 
@@ -656,7 +660,7 @@
 
             // Use 100ms interval for smooth updates (timestamp-based calculation)
             timerInterval = setInterval(async () => {
-                const now = Date.now();
+                const now = getSyncedTime();
                 const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
 
                 if (timeRemaining > 0) {
@@ -677,7 +681,7 @@
         }
 
         function updateTimerDisplay() {
-            const now = Date.now();
+            const now = getSyncedTime();
             const timeRemaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
 
             const minutes = Math.floor(timeRemaining / 60);

@@ -90,6 +90,7 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/data.js"></script>
+    <script src="/js/time-sync.js"></script>
     <script src="/js/contestant.js?v=10"></script>
     <script>
         console.log('=== VOTING.HTML SCRIPT LOADED ===');
@@ -146,7 +147,7 @@
                     console.log('✓ Timer synced to admin start time:', new Date(config.timerStartTime), 'ending at', new Date(timerEndTime));
                 } else {
                     // No start time yet - just show the duration
-                    timerEndTime = Date.now() + (duration * 1000);
+                    timerEndTime = getSyncedTime() + (duration * 1000);
                     console.log('⚠ No timerStartTime - using local fallback');
                 }
 
@@ -155,7 +156,7 @@
             } catch (error) {
                 console.error('Error initializing timer:', error);
                 document.getElementById('timerContainer').style.display = 'block';
-                timerEndTime = Date.now() + (60 * 1000);
+                timerEndTime = getSyncedTime() + (60 * 1000);
                 isTimerInitialized = true;
                 startTimer();
             }
@@ -165,7 +166,7 @@
             updateTimerDisplay();
 
             timerInterval = setInterval(async () => {
-                const now = Date.now();
+                const now = getSyncedTime();
                 const timeRemaining = (timerEndTime - now) / 1000;
 
                 if (timeRemaining > 0) {
@@ -187,7 +188,7 @@
         }
 
         function updateTimerDisplay() {
-            const now = Date.now();
+            const now = getSyncedTime();
             const timeRemaining = Math.max(0, Math.floor((timerEndTime - now) / 1000));
 
             const minutes = Math.floor(timeRemaining / 60);
@@ -335,9 +336,12 @@
             }, 500);
         }
 
-        // Initialize voting lock state watcher when page loads
-        console.log('About to call watchVotingLockState()...');
-        watchVotingLockState();
+        // Sync time with server FIRST for accurate timer synchronization
+        syncTime().then(() => {
+            // Initialize voting lock state watcher when page loads
+            console.log('About to call watchVotingLockState()...');
+            watchVotingLockState();
+        });
     </script>
 </body>
 </html>
