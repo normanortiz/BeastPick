@@ -5,6 +5,8 @@ const path = require('path');
 // Import API handlers
 const playersHandler = require('./api/players.js');
 const configHandler = require('./api/config.js');
+const authHandler = require('./api/auth.js');
+const timeHandler = require('./api/time.js');
 
 const PORT = 3000;
 
@@ -69,6 +71,14 @@ const server = http.createServer(async (req, res) => {
     if (req.url.startsWith('/api/config')) {
         await parseBody(req);
         return await configHandler.default(req, wrapResponse(res));
+    }
+    if (req.url.startsWith('/api/auth')) {
+        await parseBody(req);
+        return await authHandler.default(req, wrapResponse(res));
+    }
+    if (req.url.startsWith('/api/time')) {
+        await parseBody(req);
+        return await timeHandler.default(req, wrapResponse(res));
     }
 
     // Serve static files from public directory

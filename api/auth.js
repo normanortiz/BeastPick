@@ -22,7 +22,12 @@ export default async function handler(req, res) {
 
     try {
         // Initialize defaults on first run
-        await initializeDefaultData();
+        try {
+            await initializeDefaultData();
+        } catch (dbError) {
+            // KV not available in local development - that's okay
+            console.log('Database initialization skipped:', dbError.message);
+        }
 
         // Validate passcode
         if (path.includes('/validate-passcode')) {
