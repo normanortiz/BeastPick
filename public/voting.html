@@ -244,17 +244,24 @@
             });
         }
 
-        // Listen for voting lock state changes
+        // Listen for voting lock state changes and other admin updates
         let previousLockState = true; // Track previous lock state globally
+        let previousPlayerCount = 0; // Track player count changes
+        let previousRound = 1; // Track round changes
+        let previousVotingMode = ''; // Track voting mode changes
 
         async function watchVotingLockState() {
             try {
                 console.log('watchVotingLockState called');
                 // Initial check
                 const config = await getGameConfig();
+                const players = await getPlayers();
                 console.log('Got config:', config);
                 previousLockState = config.votingLocked !== undefined ? config.votingLocked : true;
-                console.log('Initial lock state:', previousLockState);
+                previousPlayerCount = players.length;
+                previousRound = config.currentRound || 1;
+                previousVotingMode = config.votingMode || '';
+                console.log('Initial state - Lock:', previousLockState, 'Players:', previousPlayerCount, 'Round:', previousRound, 'Mode:', previousVotingMode);
 
                 if (previousLockState) {
                     console.log('Locking voting (initial)');
@@ -269,14 +276,18 @@
                 console.error('Error in initial check:', error);
             }
 
-            // Poll for changes every 500ms - always run this
+            // Poll for changes every 500ms - check for all admin changes
             console.log('Starting polling interval...');
             setInterval(async () => {
                 try {
                     const updatedConfig = await getGameConfig();
+                    const updatedPlayers = await getPlayers();
                     const isLocked = updatedConfig.votingLocked !== undefined ? updatedConfig.votingLocked : true;
+                    const currentPlayerCount = updatedPlayers.length;
+                    const currentRound = updatedConfig.currentRound || 1;
+                    const currentVotingMode = updatedConfig.votingMode || '';
 
-                    console.log('Poll check - Previous:', previousLockState, 'Current:', isLocked);
+                    console.log('Poll check - Lock:', isLocked, 'Players:', currentPlayerCount, 'Round:', currentRound, 'Mode:', currentVotingMode);
 
                     // If voting just unlocked (went from locked to unlocked), refresh page immediately
                     if (previousLockState === true && isLocked === false) {
@@ -285,8 +296,34 @@
                         return;
                     }
 
-                    previousLockState = isLocked;
+                    // If players were added/removed, refresh to show new player tiles
+                    if (currentPlayerCount !== previousPlayerCount) {
+                        console.log('🔥 PLAYER COUNT CHANGED! Refreshing page now...');
+                        window.location.reload();
+                        return;
+                    }
 
+                    // If round changed, refresh to show new round
+                    if (currentRound !== previousRound) {
+                        console.log('🔥 ROUND CHANGED! Refreshing page now...');
+                        window.location.reload();
+                        return;
+                    }
+
+                    // If voting mode changed, refresh to update UI
+                    if (currentVotingMode !== previousVotingMode) {
+                        console.log('🔥 VOTING MODE CHANGED! Refreshing page now...');
+                        window.location.reload();
+                        return;
+                    }
+
+                    // Update previous values
+                    previousLockState = isLocked;
+                    previousPlayerCount = currentPlayerCount;
+                    previousRound = currentRound;
+                    previousVotingMode = currentVotingMode;
+
+                    // Update lock state
                     if (isLocked) {
                         lockVoting();
                     } else {

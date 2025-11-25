@@ -481,9 +481,10 @@
             document.getElementById('passcodeContainer').style.display = 'none';
             document.getElementById('displayScreen').classList.add('active');
 
-            // Load data once (polling disabled for testing)
+            // Load data initially
             loadDisplayData();
-            // TEMPORARILY DISABLED: setInterval(loadDisplayData, 2000);
+            // Auto-refresh every 2 seconds to reflect admin changes
+            setInterval(loadDisplayData, 2000);
         }
 
         /**
