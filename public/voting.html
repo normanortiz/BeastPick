@@ -120,14 +120,22 @@
 
         async function initTimer() {
             if (isTimerInitialized && timerInterval) {
-                console.log('Timer already initialized, skipping...');
+                console.log('⏭️  VOTING: Timer already initialized, skipping...');
                 return;
             }
 
             try {
                 const config = await getGameConfig();
 
-                console.log('Timer init - Visibility:', config.timerVisibility, 'Duration:', config.timerDuration, 'Locked:', config.votingLocked, 'StartTime:', config.timerStartTime);
+                console.log('⏱️  VOTING: Init timer with config:', {
+                    timerVisibility: config.timerVisibility,
+                    timerDuration: config.timerDuration,
+                    votingLocked: config.votingLocked,
+                    timerStartTime: config.timerStartTime,
+                    timerStartTimeDate: config.timerStartTime ? new Date(config.timerStartTime).toLocaleTimeString() : 'null',
+                    currentTime: getSyncedTime(),
+                    currentTimeDate: new Date(getSyncedTime()).toLocaleTimeString()
+                });
 
                 // Show timer only if timerVisibility is 'show'
                 const timerContainer = document.getElementById('timerContainer');

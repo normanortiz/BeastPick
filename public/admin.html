@@ -1583,19 +1583,27 @@
                 const currentlyLocked = config.votingLocked !== undefined ? config.votingLocked : true;
                 const newLockedState = !currentlyLocked;
 
-                // Update Firebase
-                await updateGameConfig({
+                const updates = {
                     votingLocked: newLockedState,
                     timerStartTime: newLockedState ? null : getSyncedTime(),
                     timerVisibility: newLockedState ? 'hide' : 'show'
+                };
+
+                console.log('🔄 ADMIN: Toggle voting lock', {
+                    from: currentlyLocked,
+                    to: newLockedState,
+                    updates: updates
                 });
+
+                // Update Firebase
+                await updateGameConfig(updates);
 
                 // Update UI
                 updateVotingLockUI(newLockedState);
 
-                console.log(`Voting ${newLockedState ? 'locked' : 'unlocked'}`);
+                console.log(`✅ ADMIN: Voting ${newLockedState ? 'locked' : 'unlocked'}`);
             } catch (error) {
-                console.error('Error toggling voting lock:', error);
+                console.error('❌ ADMIN: Error toggling voting lock:', error);
                 await showAlert('Error toggling voting lock', 'ERROR');
             }
         }

@@ -70,9 +70,17 @@ export default async function handler(req, res) {
 
             // Initialize with default data if not exists
             if (!config) {
+                console.log('⚠️  CONFIG: No config found, initializing with defaults');
                 config = { ...defaultConfig };
                 await setInStorage('config', config);
             }
+
+            console.log('📖 CONFIG GET:', {
+                votingLocked: config.votingLocked,
+                timerVisibility: config.timerVisibility,
+                timerStartTime: config.timerStartTime,
+                timerDuration: config.timerDuration
+            });
 
             return res.status(200).json({ success: true, config });
         }
@@ -80,16 +88,26 @@ export default async function handler(req, res) {
         // PUT - Update game config
         if (req.method === 'PUT') {
             const updates = req.body;
+            console.log('📝 CONFIG PUT - Updates received:', updates);
+
             let config = await getFromStorage('config');
 
             // If no config exists, start with defaults
             if (!config) {
+                console.log('⚠️  CONFIG: No existing config, starting with defaults');
                 config = { ...defaultConfig };
             }
 
             // Merge updates with existing config
             config = { ...config, ...updates };
             await setInStorage('config', config);
+
+            console.log('✅ CONFIG PUT - Saved config:', {
+                votingLocked: config.votingLocked,
+                timerVisibility: config.timerVisibility,
+                timerStartTime: config.timerStartTime,
+                timerDuration: config.timerDuration
+            });
 
             return res.status(200).json({ success: true, config });
         }
