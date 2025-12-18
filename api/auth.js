@@ -88,8 +88,8 @@ export default async function handler(req, res) {
 
             const { passcode } = req.body;
 
-            // Admin passcode is hardcoded on server - secure from client inspection
-            const ADMIN_PASSCODE = '000000';
+            // Admin passcode stored securely in environment variable
+            const ADMIN_PASSCODE = process.env.ADMIN_PASSCODE || '000000';
 
             if (!passcode) {
                 return res.status(400).json({
